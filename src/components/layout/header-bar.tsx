@@ -1,5 +1,5 @@
 "use client";
-import React from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { useAppStore } from '@/lib/store';
 import { REGION_LABELS, CHANNEL_LABELS, type RegionId, type ChannelId, type DateRangePreset } from '@/types';
 import { Button } from '@/components/ui/button';
@@ -10,8 +10,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
-import { ChevronRight, SlidersHorizontal, GitCompareArrows, User, MapPin, Radio } from 'lucide-react';
+import { ChevronRight, SlidersHorizontal, GitCompareArrows, User, MapPin, Radio, Megaphone } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { generateAllData } from '@/lib/mock-data';
 
 const DATE_PILLS: { value: DateRangePreset; label: string }[] = [
   { value: '7d', label: '7D' },
@@ -22,11 +23,12 @@ const DATE_PILLS: { value: DateRangePreset; label: string }[] = [
 ];
 
 function MultiSelectFilter({
-  label, icon: Icon, allItems, selectedItems, onToggle, onClear,
+  label, icon: Icon, allItems, selectedItems, onToggle, onClear, popoverWidth,
 }: {
   label: string; icon: React.ElementType;
   allItems: Record<string, string>; selectedItems: string[];
   onToggle: (id: string) => void; onClear: () => void;
+  popoverWidth?: string;
 }) {
   const count = selectedItems.length;
   const allKeys = Object.keys(allItems);
@@ -42,7 +44,7 @@ function MultiSelectFilter({
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-52 p-3" align="start">
+      <PopoverContent className={cn("w-52 p-3", popoverWidth)} align="start">
         <div className="flex items-center justify-between mb-2">
           <p className="text-xs font-medium">{label}</p>
           {count > 0 && <button onClick={onClear} className="text-[10px] text-muted-foreground hover:text-foreground">Clear</button>}
@@ -65,9 +67,67 @@ export function HeaderBar() {
   const {
     role, setRole, dateRange, setDatePreset, compareEnabled, toggleCompare,
     selectedRegions, setSelectedRegions, selectedChannels, setSelectedChannels,
+    selectedCampaigns, setSelectedCampaigns,
     attributionModel, setAttributionModel,
     selectedRegion, selectedCampaign, setSelectedRegion, setSelectedCampaign,
   } = useAppStore();
+
+  const store = useMemo(() => generateAllData(), []);
+
+  // Campaigns available based on selected regions
+  const availableCampaigns = useMemo(() => {
+    let camps = store.campaigns;
+    if (selectedRegions.length > 0) {
+      camps = camps.filter(c => selectedRegions.includes(c.region));
+    }
+    return camps;
+  }, [store, selectedRegions]);
+
+  // Label map for campaign multi-select
+  const campaignItems = useMemo(() => {
+    const items: Record<string, string> = {};
+    for (const c of availableCampaigns) {
+      items[c.id] = c.name;
+    }
+    return items;
+  }, [availableCampaigns]);
+
+  // Channels available based on selected campaigns
+  const availableChannels = useMemo(() => {
+    if (selectedCampaigns.length === 0) {
+      return CHANNEL_LABELS as unknown as Record<string, string>;
+    }
+    const camps = store.campaigns.filter(c => selectedCampaigns.includes(c.id));
+    const channelSet = new Set<ChannelId>();
+    for (const c of camps) {
+      for (const ch of c.channels) channelSet.add(ch);
+    }
+    const items: Record<string, string> = {};
+    for (const ch of channelSet) {
+      items[ch] = (CHANNEL_LABELS as Record<string, string>)[ch];
+    }
+    return items;
+  }, [store, selectedCampaigns]);
+
+  // Prune stale campaign selections when regions change
+  useEffect(() => {
+    if (selectedCampaigns.length === 0) return;
+    const validIds = new Set(availableCampaigns.map(c => c.id));
+    const pruned = selectedCampaigns.filter(id => validIds.has(id));
+    if (pruned.length !== selectedCampaigns.length) {
+      setSelectedCampaigns(pruned);
+    }
+  }, [availableCampaigns, selectedCampaigns, setSelectedCampaigns]);
+
+  // Prune stale channel selections when campaigns change
+  useEffect(() => {
+    if (selectedChannels.length === 0) return;
+    const validChannels = new Set(Object.keys(availableChannels));
+    const pruned = selectedChannels.filter(ch => validChannels.has(ch));
+    if (pruned.length !== selectedChannels.length) {
+      setSelectedChannels(pruned as ChannelId[]);
+    }
+  }, [availableChannels, selectedChannels, setSelectedChannels]);
 
   const viewLevel = selectedCampaign ? 'campaign' : selectedRegion ? 'region' : 'brand';
   const viewLabel = viewLevel === 'campaign' ? 'Campaign View' : viewLevel === 'region' ? 'Region View' : 'Brand View';
@@ -75,6 +135,10 @@ export function HeaderBar() {
   const toggleRegion = (id: string) => {
     const r = id as RegionId;
     setSelectedRegions(selectedRegions.includes(r) ? selectedRegions.filter(x => x !== r) : [...selectedRegions, r]);
+  };
+
+  const toggleCampaign = (id: string) => {
+    setSelectedCampaigns(selectedCampaigns.includes(id) ? selectedCampaigns.filter(x => x !== id) : [...selectedCampaigns, id]);
   };
 
   const toggleChannel = (id: string) => {
@@ -148,7 +212,8 @@ export function HeaderBar() {
       <div className="flex items-center gap-2 px-8 h-9 border-t border-border/20">
         <SlidersHorizontal className="h-3.5 w-3.5 text-muted-foreground mr-1" />
         <MultiSelectFilter label="Region" icon={MapPin} allItems={REGION_LABELS as unknown as Record<string, string>} selectedItems={selectedRegions} onToggle={toggleRegion} onClear={() => setSelectedRegions([])} />
-        <MultiSelectFilter label="Channel" icon={Radio} allItems={CHANNEL_LABELS as unknown as Record<string, string>} selectedItems={selectedChannels} onToggle={toggleChannel} onClear={() => setSelectedChannels([])} />
+        <MultiSelectFilter label="Campaign" icon={Megaphone} allItems={campaignItems} selectedItems={selectedCampaigns} onToggle={toggleCampaign} onClear={() => setSelectedCampaigns([])} popoverWidth="w-72" />
+        <MultiSelectFilter label="Channel" icon={Radio} allItems={availableChannels} selectedItems={selectedChannels} onToggle={toggleChannel} onClear={() => setSelectedChannels([])} />
 
         <Select value={attributionModel} onValueChange={(v) => setAttributionModel(v as typeof attributionModel)}>
           <SelectTrigger className="h-7 w-[140px] text-xs border-border bg-transparent text-muted-foreground ml-auto">

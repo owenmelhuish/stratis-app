@@ -75,6 +75,7 @@ export interface AppState {
   compareEnabled: boolean;
   selectedRegions: RegionId[];
   selectedChannels: ChannelId[];
+  selectedCampaigns: string[];
   selectedObjectives: CampaignObjective[];
   selectedCampaignStatuses: CampaignStatus[];
   attributionModel: AttributionModel;
@@ -98,6 +99,7 @@ export interface AppState {
   setSelectedCampaign: (campaign: string | null) => void;
   setSelectedRegions: (regions: RegionId[]) => void;
   setSelectedChannels: (channels: ChannelId[]) => void;
+  setSelectedCampaigns: (campaigns: string[]) => void;
   setSelectedObjectives: (objectives: CampaignObjective[]) => void;
   setSelectedCampaignStatuses: (statuses: CampaignStatus[]) => void;
   setAttributionModel: (model: AttributionModel) => void;
@@ -125,6 +127,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
   compareEnabled: false,
   selectedRegions: [],
   selectedChannels: [],
+  selectedCampaigns: [],
   selectedObjectives: [],
   selectedCampaignStatuses: [],
   attributionModel: 'last-click',
@@ -153,6 +156,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
   setRole: (role) => { set({ role }); get().syncToStorage(); },
   setSelectedRegions: (regions) => set({ selectedRegions: regions }),
   setSelectedChannels: (channels) => set({ selectedChannels: channels }),
+  setSelectedCampaigns: (campaigns) => set({ selectedCampaigns: campaigns }),
   setSelectedObjectives: (objectives) => set({ selectedObjectives: objectives }),
   setSelectedCampaignStatuses: (statuses) => set({ selectedCampaignStatuses: statuses }),
   setAttributionModel: (model) => set({ attributionModel: model }),

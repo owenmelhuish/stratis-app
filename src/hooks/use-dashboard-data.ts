@@ -67,6 +67,7 @@ export function useDashboardData(): DashboardData {
   const store = useMemo(() => generateAllData(), []);
   const {
     dateRange, compareEnabled, selectedRegions, selectedChannels,
+    selectedCampaigns,
     selectedObjectives, selectedCampaignStatuses, attributionModel,
     selectedRegion, selectedCampaign,
   } = useAppStore();
@@ -86,6 +87,7 @@ export function useDashboardData(): DashboardData {
     if (selectedRegions.length > 0) campaigns = campaigns.filter(c => selectedRegions.includes(c.region));
     if (selectedObjectives.length > 0) campaigns = campaigns.filter(c => selectedObjectives.includes(c.objective));
     if (selectedCampaignStatuses.length > 0) campaigns = campaigns.filter(c => selectedCampaignStatuses.includes(c.status));
+    if (selectedCampaigns.length > 0) campaigns = campaigns.filter(c => selectedCampaigns.includes(c.id));
 
     // Determine view level
     const viewLevel = selectedCampaign ? 'campaign' : selectedRegion ? 'region' : 'brand';
@@ -207,13 +209,19 @@ export function useDashboardData(): DashboardData {
       topDeclining = movers.filter(m => m.roasDelta < 0).sort((a, b) => a.roasDelta - b.roasDelta).slice(0, 3);
     }
 
-    // Anomalies
+    // Anomalies — respect both multi-select filters and drill-down
     let anomalies = store.anomalies.filter(a => a.date >= start && a.date <= end);
+    if (selectedRegions.length > 0) anomalies = anomalies.filter(a => selectedRegions.includes(a.region));
+    if (selectedCampaigns.length > 0) anomalies = anomalies.filter(a => !a.campaign || selectedCampaigns.includes(a.campaign));
+    if (selectedChannels.length > 0) anomalies = anomalies.filter(a => !a.channel || selectedChannels.includes(a.channel));
     if (selectedRegion) anomalies = anomalies.filter(a => a.region === selectedRegion);
     if (selectedCampaign) anomalies = anomalies.filter(a => a.campaign === selectedCampaign);
 
-    // Scoped insights
+    // Scoped insights — respect both multi-select filters and drill-down
     let scopedInsights = store.insights.filter(i => i.createdAt >= start && i.createdAt <= end);
+    if (selectedRegions.length > 0) scopedInsights = scopedInsights.filter(i => !i.region || selectedRegions.includes(i.region));
+    if (selectedCampaigns.length > 0) scopedInsights = scopedInsights.filter(i => !i.campaign || selectedCampaigns.includes(i.campaign));
+    if (selectedChannels.length > 0) scopedInsights = scopedInsights.filter(i => i.channels.length === 0 || i.channels.some(ch => selectedChannels.includes(ch)));
     if (selectedRegion) scopedInsights = scopedInsights.filter(i => !i.region || i.region === selectedRegion);
     if (selectedCampaign) scopedInsights = scopedInsights.filter(i => !i.campaign || i.campaign === selectedCampaign);
 
@@ -224,5 +232,5 @@ export function useDashboardData(): DashboardData {
       channelData: channelDataMap, topImproving, topDeclining, anomalies, scopedInsights,
       allCampaigns: store.campaigns, selectedCampaignObj, store,
     };
-  }, [store, dateRange, compareEnabled, selectedRegions, selectedChannels, selectedObjectives, selectedCampaignStatuses, attributionModel, selectedRegion, selectedCampaign]);
+  }, [store, dateRange, compareEnabled, selectedRegions, selectedChannels, selectedCampaigns, selectedObjectives, selectedCampaignStatuses, attributionModel, selectedRegion, selectedCampaign]);
 }
