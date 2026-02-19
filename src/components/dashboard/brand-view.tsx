@@ -19,6 +19,7 @@ import { Label } from '@/components/ui/label';
 import { Settings2, TrendingUp, TrendingDown, AlertTriangle, ArrowRight, PieChart as PieChartIcon, Table2, Zap, Target, DollarSign, BarChart3, Activity, Eye } from 'lucide-react';
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from 'recharts';
 import { KPI_CONFIGS, REGION_LABELS, CHANNEL_LABELS, type KPIKey, type ChannelId, type RegionId, type AggregatedKPIs } from '@/types';
+import { COUNTRY_TO_REGION } from '@/lib/geo';
 import { formatCurrency, formatKPIValue, formatPercent } from '@/lib/format';
 import Link from 'next/link';
 
@@ -213,17 +214,39 @@ export function BrandView() {
 
       </div>
 
-      <WorldMapChart
-        regionData={data.regionData}
-        colorMetric={mapColorMetric}
-        onColorMetricChange={setMapColorMetric}
-        onRegionClick={drillToRegion}
-        viewLevel={data.filteredRegions.length === 1 ? 'region' : 'brand'}
-        selectedRegion={data.filteredRegions.length === 1 ? data.filteredRegions[0] : undefined}
-        countryData={data.filteredRegions.length === 1
-          ? data.countryData.filter(c => c.regionId === data.filteredRegions[0])
-          : undefined}
-      />
+      {(() => {
+        // Derive map zoom from country filter: if all filtered countries belong to one region, zoom to it
+        let mapViewLevel: 'brand' | 'region' = data.filteredRegions.length === 1 ? 'region' : 'brand';
+        let mapSelectedRegion: RegionId | undefined = data.filteredRegions.length === 1 ? data.filteredRegions[0] : undefined;
+        let mapHighlightedCountries: string[] | undefined;
+
+        if (data.filteredCountries.length > 0) {
+          const regionSet = new Set(data.filteredCountries.map(c => COUNTRY_TO_REGION[c]).filter(Boolean));
+          if (regionSet.size === 1) {
+            const singleRegion = [...regionSet][0] as RegionId;
+            mapViewLevel = 'region';
+            mapSelectedRegion = singleRegion;
+          }
+          mapHighlightedCountries = data.filteredCountries;
+        }
+
+        const mapCountryData = mapViewLevel === 'region' && mapSelectedRegion
+          ? data.countryData.filter(c => c.regionId === mapSelectedRegion)
+          : undefined;
+
+        return (
+          <WorldMapChart
+            regionData={data.regionData}
+            colorMetric={mapColorMetric}
+            onColorMetricChange={setMapColorMetric}
+            onRegionClick={drillToRegion}
+            viewLevel={mapViewLevel}
+            selectedRegion={mapSelectedRegion}
+            countryData={mapCountryData}
+            highlightedCountries={mapHighlightedCountries}
+          />
+        );
+      })()}
 
       <div className="grid grid-cols-1 xl:grid-cols-5 gap-6">
         <div className="xl:col-span-3">

@@ -74,6 +74,7 @@ export interface AppState {
   dateRange: DateRange;
   compareEnabled: boolean;
   selectedRegions: RegionId[];
+  selectedCountries: string[];
   selectedChannels: ChannelId[];
   selectedCampaigns: string[];
   selectedObjectives: CampaignObjective[];
@@ -98,6 +99,7 @@ export interface AppState {
   setSelectedRegion: (region: RegionId | null) => void;
   setSelectedCampaign: (campaign: string | null) => void;
   setSelectedRegions: (regions: RegionId[]) => void;
+  setSelectedCountries: (countries: string[]) => void;
   setSelectedChannels: (channels: ChannelId[]) => void;
   setSelectedCampaigns: (campaigns: string[]) => void;
   setSelectedObjectives: (objectives: CampaignObjective[]) => void;
@@ -126,6 +128,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
   dateRange: DEFAULT_DATE_RANGE,
   compareEnabled: false,
   selectedRegions: [],
+  selectedCountries: [],
   selectedChannels: [],
   selectedCampaigns: [],
   selectedObjectives: [],
@@ -155,6 +158,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
   toggleCompare: () => { set((s) => ({ compareEnabled: !s.compareEnabled })); get().syncToStorage(); },
   setRole: (role) => { set({ role }); get().syncToStorage(); },
   setSelectedRegions: (regions) => set({ selectedRegions: regions }),
+  setSelectedCountries: (countries) => set({ selectedCountries: countries }),
   setSelectedChannels: (channels) => set({ selectedChannels: channels }),
   setSelectedCampaigns: (campaigns) => set({ selectedCampaigns: campaigns }),
   setSelectedObjectives: (objectives) => set({ selectedObjectives: objectives }),

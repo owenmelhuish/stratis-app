@@ -218,6 +218,14 @@ export function WorldMapChart({
       if (isRegionView) {
         if (!regionId) return "rgba(255,255,255,0.02)";
         if (regionId !== selectedRegion) return "rgba(255,255,255,0.02)";
+        // When highlighted countries are provided, only those get bright fill
+        if (highlightedSet.size > 0) {
+          if (highlightedSet.has(countryId)) {
+            const intensity = countryIntensityMap[countryId];
+            return regionFillColor(intensity !== undefined ? 0.2 + intensity * 0.6 : 0.5);
+          }
+          return "rgba(80,184,154,0.06)";
+        }
         const intensity = countryIntensityMap[countryId];
         if (intensity !== undefined) {
           return regionFillColor(0.2 + intensity * 0.6);

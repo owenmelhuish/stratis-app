@@ -39,6 +39,7 @@ export interface DashboardData {
   anomalies: Anomaly[];
   scopedInsights: Insight[];
   filteredRegions: RegionId[];
+  filteredCountries: string[];
   allCampaigns: Campaign[];
   selectedCampaignObj?: Campaign;
   store: MockDataStore;
@@ -77,7 +78,7 @@ function mergeDailyArrays(arrays: DailyMetrics[][]): DailyMetrics[] {
 export function useDashboardData(): DashboardData {
   const store = useMemo(() => generateAllData(), []);
   const {
-    dateRange, compareEnabled, selectedRegions, selectedChannels,
+    dateRange, compareEnabled, selectedRegions, selectedCountries, selectedChannels,
     selectedCampaigns,
     selectedObjectives, selectedCampaignStatuses, attributionModel,
     selectedRegion, selectedCampaign,
@@ -96,6 +97,10 @@ export function useDashboardData(): DashboardData {
     // Filter campaigns
     let campaigns = store.campaigns;
     if (selectedRegions.length > 0) campaigns = campaigns.filter(c => selectedRegions.includes(c.region));
+    if (selectedCountries.length > 0) {
+      const countrySet = new Set(selectedCountries);
+      campaigns = campaigns.filter(c => c.countries.some(cc => countrySet.has(cc)));
+    }
     if (selectedObjectives.length > 0) campaigns = campaigns.filter(c => selectedObjectives.includes(c.objective));
     if (selectedCampaignStatuses.length > 0) campaigns = campaigns.filter(c => selectedCampaignStatuses.includes(c.status));
     if (selectedCampaigns.length > 0) campaigns = campaigns.filter(c => selectedCampaigns.includes(c.id));
@@ -250,19 +255,24 @@ export function useDashboardData(): DashboardData {
         countryAccum[code].campaignCount += 1;
       }
     }
-    const countryData: CountryDatum[] = Object.entries(countryAccum).map(([code, val]) => ({
+    let countryData: CountryDatum[] = Object.entries(countryAccum).map(([code, val]) => ({
       countryCode: code,
       countryName: COUNTRY_NAMES[code] || code,
       regionId: COUNTRY_TO_REGION[code] as RegionId,
       campaignCount: val.campaignCount,
       spend: val.spend,
     }));
+    if (selectedCountries.length > 0) {
+      const countrySet = new Set(selectedCountries);
+      countryData = countryData.filter(c => countrySet.has(c.countryCode));
+    }
 
     return {
       viewLevel, currentKPIs, previousKPIs, timeSeries, regionData, campaignData,
       channelData: channelDataMap, countryData, topImproving, topDeclining, anomalies, scopedInsights,
       filteredRegions: selectedRegions,
+      filteredCountries: selectedCountries,
       allCampaigns: store.campaigns, selectedCampaignObj, store,
     };
-  }, [store, dateRange, compareEnabled, selectedRegions, selectedChannels, selectedCampaigns, selectedObjectives, selectedCampaignStatuses, attributionModel, selectedRegion, selectedCampaign]);
+  }, [store, dateRange, compareEnabled, selectedRegions, selectedCountries, selectedChannels, selectedCampaigns, selectedObjectives, selectedCampaignStatuses, attributionModel, selectedRegion, selectedCampaign]);
 }
