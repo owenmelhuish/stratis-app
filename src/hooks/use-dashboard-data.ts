@@ -2,12 +2,21 @@
 import { useMemo } from 'react';
 import { useAppStore } from '@/lib/store';
 import { generateAllData, aggregateMetrics, type MockDataStore } from '@/lib/mock-data';
-import type { RegionId, ChannelId, AggregatedKPIs, Campaign, DailyMetrics, Anomaly, Insight } from '@/types';
+import type { RegionId, ChannelId, AggregatedKPIs, Campaign, DailyMetrics, Anomaly, Insight, ViewLevel } from '@/types';
+import { COUNTRY_NAMES, COUNTRY_TO_REGION } from '@/lib/geo';
 import { REGION_LABELS } from '@/types';
 import { subDays, format, differenceInDays, parseISO } from 'date-fns';
 
+export interface CountryDatum {
+  countryCode: string;
+  countryName: string;
+  regionId: RegionId;
+  campaignCount: number;
+  spend: number;
+}
+
 export interface DashboardData {
-  viewLevel: 'brand' | 'region' | 'campaign';
+  viewLevel: ViewLevel;
   currentKPIs: AggregatedKPIs;
   previousKPIs: AggregatedKPIs | null;
   timeSeries: Array<Record<string, number | string>>;
@@ -24,10 +33,12 @@ export interface DashboardData {
     previousKpis?: AggregatedKPIs;
   }>;
   channelData: Record<string, AggregatedKPIs>;
+  countryData: CountryDatum[];
   topImproving: Array<{ label: string; region: RegionId; roasDelta: number; cpaDelta: number }>;
   topDeclining: Array<{ label: string; region: RegionId; roasDelta: number; cpaDelta: number }>;
   anomalies: Anomaly[];
   scopedInsights: Insight[];
+  filteredRegions: RegionId[];
   allCampaigns: Campaign[];
   selectedCampaignObj?: Campaign;
   store: MockDataStore;
@@ -227,9 +238,30 @@ export function useDashboardData(): DashboardData {
 
     const selectedCampaignObj = selectedCampaign ? store.campaigns.find(c => c.id === selectedCampaign) : undefined;
 
+    // Country-level data: split each campaign's spend evenly across its countries
+    const countryAccum: Record<string, { spend: number; campaignCount: number }> = {};
+    for (const cd of campaignData) {
+      const countries = cd.campaign.countries;
+      if (!countries || countries.length === 0) continue;
+      const perCountrySpend = cd.kpis.spend / countries.length;
+      for (const code of countries) {
+        if (!countryAccum[code]) countryAccum[code] = { spend: 0, campaignCount: 0 };
+        countryAccum[code].spend += perCountrySpend;
+        countryAccum[code].campaignCount += 1;
+      }
+    }
+    const countryData: CountryDatum[] = Object.entries(countryAccum).map(([code, val]) => ({
+      countryCode: code,
+      countryName: COUNTRY_NAMES[code] || code,
+      regionId: COUNTRY_TO_REGION[code] as RegionId,
+      campaignCount: val.campaignCount,
+      spend: val.spend,
+    }));
+
     return {
       viewLevel, currentKPIs, previousKPIs, timeSeries, regionData, campaignData,
-      channelData: channelDataMap, topImproving, topDeclining, anomalies, scopedInsights,
+      channelData: channelDataMap, countryData, topImproving, topDeclining, anomalies, scopedInsights,
+      filteredRegions: selectedRegions,
       allCampaigns: store.campaigns, selectedCampaignObj, store,
     };
   }, [store, dateRange, compareEnabled, selectedRegions, selectedChannels, selectedCampaigns, selectedObjectives, selectedCampaignStatuses, attributionModel, selectedRegion, selectedCampaign]);

@@ -6,6 +6,7 @@ import { KPIGrid } from '@/components/shared/kpi-grid';
 import { HeroKPICard } from '@/components/shared/hero-kpi-card';
 import { TrendChart } from '@/components/shared/trend-chart';
 import { ChannelMixChart } from '@/components/shared/channel-mix-chart';
+import { WorldMapChart } from '@/components/shared/world-map-chart';
 import { DataTableWrapper, type Column } from '@/components/shared/data-table-wrapper';
 import { ComparisonDelta } from '@/components/shared/comparison-delta';
 import { Card } from '@/components/ui/card';
@@ -87,6 +88,15 @@ export function RegionView() {
           <KPIGrid kpis={secondaryKpis} current={data.currentKPIs} previous={data.previousKPIs || undefined} />
         )}
       </div>
+
+      {selectedRegion && (
+        <WorldMapChart
+          regionData={data.regionData}
+          viewLevel="region"
+          selectedRegion={selectedRegion}
+          countryData={data.countryData.filter(c => c.regionId === selectedRegion)}
+        />
+      )}
 
       <div className="grid grid-cols-1 xl:grid-cols-5 gap-6">
         <div className="xl:col-span-3">

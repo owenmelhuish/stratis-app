@@ -10,6 +10,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { CHANNEL_LABELS, CHANNEL_COLORS, KPI_CONFIGS, type KPIKey, type ChannelId, type AggregatedKPIs } from '@/types';
 import { formatCurrency, formatKPIValue, formatPercent } from '@/lib/format';
+import { WorldMapChart } from '@/components/shared/world-map-chart';
 import { Lightbulb, Palette } from 'lucide-react';
 import Link from 'next/link';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
@@ -61,6 +62,16 @@ export function CampaignView() {
           <Badge variant="outline" className="capitalize">{campaign.objective}</Badge>
           <span className="text-xs text-muted-foreground">Channels: {campaign.channels.map(c => CHANNEL_LABELS[c]).join(', ')}</span>
         </div>
+      )}
+
+      {campaign && (
+        <WorldMapChart
+          regionData={data.regionData}
+          viewLevel="campaign"
+          selectedRegion={campaign.region}
+          highlightedCountries={campaign.countries}
+          campaignName={campaign.name}
+        />
       )}
 
       <div>

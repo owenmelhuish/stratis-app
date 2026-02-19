@@ -87,40 +87,41 @@ const REGION_MULTIPLIERS: Record<RegionId, number> = {
 interface CampaignDef {
   id: string; name: string; region: RegionId; objective: CampaignObjective;
   status: CampaignStatus; channels: ChannelId[]; budgetMultiplier: number;
+  countries: string[];
 }
 
 const CAMPAIGN_DEFS: CampaignDef[] = [
-  // North America
-  { id: 'na-taycan-launch', name: 'NA Taycan Launch', region: 'north-america', objective: 'awareness', status: 'live', channels: ['instagram', 'facebook', 'tiktok', 'ttd'], budgetMultiplier: 1.5 },
-  { id: 'na-911-performance', name: 'NA 911 Performance', region: 'north-america', objective: 'performance', status: 'live', channels: ['google-search', 'facebook', 'instagram'], budgetMultiplier: 1.2 },
-  { id: 'na-cayenne-summer', name: 'NA Cayenne Summer', region: 'north-america', objective: 'consideration', status: 'live', channels: ['instagram', 'tiktok', 'ttd', 'facebook'], budgetMultiplier: 1.0 },
-  { id: 'na-macan-retarget', name: 'NA Macan Retargeting', region: 'north-america', objective: 'performance', status: 'paused', channels: ['google-search', 'facebook', 'ttd'], budgetMultiplier: 0.7 },
-  { id: 'na-brand-always-on', name: 'NA Brand Always-On', region: 'north-america', objective: 'awareness', status: 'live', channels: ['instagram', 'facebook', 'tiktok', 'google-search', 'ttd'], budgetMultiplier: 0.9 },
-  // Europe
-  { id: 'eu-911-heritage', name: 'EU 911 Heritage', region: 'europe', objective: 'awareness', status: 'live', channels: ['instagram', 'facebook', 'tiktok', 'ttd'], budgetMultiplier: 1.3 },
-  { id: 'eu-taycan-turbo', name: 'EU Taycan Turbo', region: 'europe', objective: 'performance', status: 'live', channels: ['google-search', 'facebook', 'instagram', 'ttd'], budgetMultiplier: 1.1 },
-  { id: 'eu-panamera-exec', name: 'EU Panamera Executive', region: 'europe', objective: 'consideration', status: 'live', channels: ['facebook', 'google-search', 'ttd'], budgetMultiplier: 0.8 },
-  { id: 'eu-winter-driving', name: 'EU Winter Driving', region: 'europe', objective: 'awareness', status: 'paused', channels: ['instagram', 'tiktok', 'facebook'], budgetMultiplier: 0.6 },
-  // UK
-  { id: 'uk-cayenne-summer', name: 'UK Cayenne Summer', region: 'uk', objective: 'consideration', status: 'live', channels: ['instagram', 'facebook', 'google-search', 'ttd'], budgetMultiplier: 1.0 },
-  { id: 'uk-taycan-electric', name: 'UK Taycan Electric', region: 'uk', objective: 'performance', status: 'live', channels: ['google-search', 'facebook', 'ttd'], budgetMultiplier: 1.1 },
-  { id: 'uk-911-heritage', name: 'UK 911 Heritage', region: 'uk', objective: 'awareness', status: 'live', channels: ['instagram', 'tiktok', 'facebook'], budgetMultiplier: 0.7 },
-  { id: 'uk-macan-launch', name: 'UK Macan Launch', region: 'uk', objective: 'awareness', status: 'live', channels: ['instagram', 'facebook', 'tiktok', 'google-search', 'ttd'], budgetMultiplier: 1.2 },
-  // Middle East
-  { id: 'me-cayenne-luxury', name: 'ME Cayenne Luxury', region: 'middle-east', objective: 'awareness', status: 'live', channels: ['instagram', 'tiktok', 'ttd'], budgetMultiplier: 1.0 },
-  { id: 'me-911-gt', name: 'ME 911 GT Collection', region: 'middle-east', objective: 'performance', status: 'live', channels: ['google-search', 'instagram', 'facebook'], budgetMultiplier: 0.9 },
-  { id: 'me-taycan-desert', name: 'ME Taycan Desert', region: 'middle-east', objective: 'consideration', status: 'live', channels: ['tiktok', 'instagram', 'ttd'], budgetMultiplier: 0.8 },
-  { id: 'me-panamera-vip', name: 'ME Panamera VIP', region: 'middle-east', objective: 'performance', status: 'paused', channels: ['google-search', 'facebook'], budgetMultiplier: 0.5 },
-  // APAC
-  { id: 'apac-taycan-launch', name: 'APAC Taycan Launch', region: 'apac', objective: 'awareness', status: 'live', channels: ['instagram', 'facebook', 'tiktok', 'ttd'], budgetMultiplier: 1.3 },
-  { id: 'apac-cayenne-family', name: 'APAC Cayenne Family', region: 'apac', objective: 'consideration', status: 'live', channels: ['facebook', 'instagram', 'google-search'], budgetMultiplier: 0.9 },
-  { id: 'apac-911-track', name: 'APAC 911 Track Day', region: 'apac', objective: 'performance', status: 'live', channels: ['google-search', 'instagram', 'tiktok'], budgetMultiplier: 0.8 },
-  { id: 'apac-brand-digital', name: 'APAC Brand Digital', region: 'apac', objective: 'awareness', status: 'live', channels: ['tiktok', 'instagram', 'ttd', 'facebook'], budgetMultiplier: 0.7 },
-  // LATAM
-  { id: 'latam-cayenne-urban', name: 'LATAM Cayenne Urban', region: 'latam', objective: 'consideration', status: 'live', channels: ['instagram', 'facebook', 'tiktok'], budgetMultiplier: 0.8 },
-  { id: 'latam-911-legend', name: 'LATAM 911 Legend', region: 'latam', objective: 'awareness', status: 'live', channels: ['instagram', 'tiktok', 'ttd'], budgetMultiplier: 0.7 },
-  { id: 'latam-taycan-green', name: 'LATAM Taycan Green', region: 'latam', objective: 'performance', status: 'live', channels: ['google-search', 'facebook'], budgetMultiplier: 0.6 },
-  { id: 'latam-macan-adventure', name: 'LATAM Macan Adventure', region: 'latam', objective: 'awareness', status: 'paused', channels: ['instagram', 'facebook', 'tiktok', 'ttd'], budgetMultiplier: 0.5 },
+  // North America (840=USA, 124=Canada, 484=Mexico)
+  { id: 'na-taycan-launch', name: 'NA Taycan Launch', region: 'north-america', objective: 'awareness', status: 'live', channels: ['instagram', 'facebook', 'tiktok', 'ttd'], budgetMultiplier: 1.5, countries: ['840', '124', '484'] },
+  { id: 'na-911-performance', name: 'NA 911 Performance', region: 'north-america', objective: 'performance', status: 'live', channels: ['google-search', 'facebook', 'instagram'], budgetMultiplier: 1.2, countries: ['840', '124'] },
+  { id: 'na-cayenne-summer', name: 'NA Cayenne Summer', region: 'north-america', objective: 'consideration', status: 'live', channels: ['instagram', 'tiktok', 'ttd', 'facebook'], budgetMultiplier: 1.0, countries: ['840'] },
+  { id: 'na-macan-retarget', name: 'NA Macan Retargeting', region: 'north-america', objective: 'performance', status: 'paused', channels: ['google-search', 'facebook', 'ttd'], budgetMultiplier: 0.7, countries: ['840', '124'] },
+  { id: 'na-brand-always-on', name: 'NA Brand Always-On', region: 'north-america', objective: 'awareness', status: 'live', channels: ['instagram', 'facebook', 'tiktok', 'google-search', 'ttd'], budgetMultiplier: 0.9, countries: ['840', '124', '484'] },
+  // Europe (276=Germany, 250=France, 380=Italy, 724=Spain, 528=Netherlands, 756=Switzerland, 752=Sweden, 578=Norway)
+  { id: 'eu-911-heritage', name: 'EU 911 Heritage', region: 'europe', objective: 'awareness', status: 'live', channels: ['instagram', 'facebook', 'tiktok', 'ttd'], budgetMultiplier: 1.3, countries: ['276', '250', '380', '724', '528'] },
+  { id: 'eu-taycan-turbo', name: 'EU Taycan Turbo', region: 'europe', objective: 'performance', status: 'live', channels: ['google-search', 'facebook', 'instagram', 'ttd'], budgetMultiplier: 1.1, countries: ['276', '756', '528'] },
+  { id: 'eu-panamera-exec', name: 'EU Panamera Executive', region: 'europe', objective: 'consideration', status: 'live', channels: ['facebook', 'google-search', 'ttd'], budgetMultiplier: 0.8, countries: ['276', '250', '380'] },
+  { id: 'eu-winter-driving', name: 'EU Winter Driving', region: 'europe', objective: 'awareness', status: 'paused', channels: ['instagram', 'tiktok', 'facebook'], budgetMultiplier: 0.6, countries: ['752', '578', '756'] },
+  // UK (826=United Kingdom, 372=Ireland)
+  { id: 'uk-cayenne-summer', name: 'UK Cayenne Summer', region: 'uk', objective: 'consideration', status: 'live', channels: ['instagram', 'facebook', 'google-search', 'ttd'], budgetMultiplier: 1.0, countries: ['826', '372'] },
+  { id: 'uk-taycan-electric', name: 'UK Taycan Electric', region: 'uk', objective: 'performance', status: 'live', channels: ['google-search', 'facebook', 'ttd'], budgetMultiplier: 1.1, countries: ['826'] },
+  { id: 'uk-911-heritage', name: 'UK 911 Heritage', region: 'uk', objective: 'awareness', status: 'live', channels: ['instagram', 'tiktok', 'facebook'], budgetMultiplier: 0.7, countries: ['826', '372'] },
+  { id: 'uk-macan-launch', name: 'UK Macan Launch', region: 'uk', objective: 'awareness', status: 'live', channels: ['instagram', 'facebook', 'tiktok', 'google-search', 'ttd'], budgetMultiplier: 1.2, countries: ['826'] },
+  // Middle East (682=Saudi Arabia, 784=UAE, 634=Qatar, 414=Kuwait, 512=Oman)
+  { id: 'me-cayenne-luxury', name: 'ME Cayenne Luxury', region: 'middle-east', objective: 'awareness', status: 'live', channels: ['instagram', 'tiktok', 'ttd'], budgetMultiplier: 1.0, countries: ['784', '682', '634'] },
+  { id: 'me-911-gt', name: 'ME 911 GT Collection', region: 'middle-east', objective: 'performance', status: 'live', channels: ['google-search', 'instagram', 'facebook'], budgetMultiplier: 0.9, countries: ['784', '682'] },
+  { id: 'me-taycan-desert', name: 'ME Taycan Desert', region: 'middle-east', objective: 'consideration', status: 'live', channels: ['tiktok', 'instagram', 'ttd'], budgetMultiplier: 0.8, countries: ['784', '414', '512'] },
+  { id: 'me-panamera-vip', name: 'ME Panamera VIP', region: 'middle-east', objective: 'performance', status: 'paused', channels: ['google-search', 'facebook'], budgetMultiplier: 0.5, countries: ['682', '634'] },
+  // APAC (156=China, 392=Japan, 410=South Korea, 036=Australia, 702=Singapore)
+  { id: 'apac-taycan-launch', name: 'APAC Taycan Launch', region: 'apac', objective: 'awareness', status: 'live', channels: ['instagram', 'facebook', 'tiktok', 'ttd'], budgetMultiplier: 1.3, countries: ['156', '392', '410', '036'] },
+  { id: 'apac-cayenne-family', name: 'APAC Cayenne Family', region: 'apac', objective: 'consideration', status: 'live', channels: ['facebook', 'instagram', 'google-search'], budgetMultiplier: 0.9, countries: ['156', '036', '702'] },
+  { id: 'apac-911-track', name: 'APAC 911 Track Day', region: 'apac', objective: 'performance', status: 'live', channels: ['google-search', 'instagram', 'tiktok'], budgetMultiplier: 0.8, countries: ['392', '410'] },
+  { id: 'apac-brand-digital', name: 'APAC Brand Digital', region: 'apac', objective: 'awareness', status: 'live', channels: ['tiktok', 'instagram', 'ttd', 'facebook'], budgetMultiplier: 0.7, countries: ['156', '392', '036', '702', '410'] },
+  // LATAM (076=Brazil, 032=Argentina, 152=Chile, 170=Colombia, 604=Peru)
+  { id: 'latam-cayenne-urban', name: 'LATAM Cayenne Urban', region: 'latam', objective: 'consideration', status: 'live', channels: ['instagram', 'facebook', 'tiktok'], budgetMultiplier: 0.8, countries: ['076', '032', '170'] },
+  { id: 'latam-911-legend', name: 'LATAM 911 Legend', region: 'latam', objective: 'awareness', status: 'live', channels: ['instagram', 'tiktok', 'ttd'], budgetMultiplier: 0.7, countries: ['076', '152'] },
+  { id: 'latam-taycan-green', name: 'LATAM Taycan Green', region: 'latam', objective: 'performance', status: 'live', channels: ['google-search', 'facebook'], budgetMultiplier: 0.6, countries: ['076', '032', '604'] },
+  { id: 'latam-macan-adventure', name: 'LATAM Macan Adventure', region: 'latam', objective: 'awareness', status: 'paused', channels: ['instagram', 'facebook', 'tiktok', 'ttd'], budgetMultiplier: 0.5, countries: ['076', '170', '152', '032'] },
 ];
 
 // ===== Events (anomaly generators) =====
@@ -659,6 +660,7 @@ export function generateAllData(): MockDataStore {
     objective: def.objective,
     status: def.status,
     channels: def.channels,
+    countries: def.countries,
     startDate: format(START_DATE, 'yyyy-MM-dd'),
     plannedBudget: Math.round(def.budgetMultiplier * REGION_MULTIPLIERS[def.region] * 150000),
   }));

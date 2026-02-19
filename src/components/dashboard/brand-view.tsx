@@ -218,6 +218,11 @@ export function BrandView() {
         colorMetric={mapColorMetric}
         onColorMetricChange={setMapColorMetric}
         onRegionClick={drillToRegion}
+        viewLevel={data.filteredRegions.length === 1 ? 'region' : 'brand'}
+        selectedRegion={data.filteredRegions.length === 1 ? data.filteredRegions[0] : undefined}
+        countryData={data.filteredRegions.length === 1
+          ? data.countryData.filter(c => c.regionId === data.filteredRegions[0])
+          : undefined}
       />
 
       <div className="grid grid-cols-1 xl:grid-cols-5 gap-6">

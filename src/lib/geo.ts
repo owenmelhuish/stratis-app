@@ -10,6 +10,34 @@ export const REGION_CENTERS: Record<RegionId, [number, number]> = {
   'latam':         [-60, -15],
 };
 
+/** Projection configs for zooming to each region */
+export const REGION_PROJECTIONS: Record<RegionId | 'global', { center: [number, number]; scale: number }> = {
+  'global':        { center: [10, 30], scale: 130 },
+  'north-america': { center: [-100, 45], scale: 400 },
+  'europe':        { center: [15, 52], scale: 600 },
+  'uk':            { center: [-4, 55], scale: 1800 },
+  'middle-east':   { center: [45, 27], scale: 600 },
+  'apac':          { center: [110, 15], scale: 300 },
+  'latam':         { center: [-60, -15], scale: 350 },
+};
+
+/** ISO 3166-1 numeric code → display name for tooltips */
+export const COUNTRY_NAMES: Record<string, string> = {
+  '840': 'United States', '124': 'Canada', '484': 'Mexico',
+  '276': 'Germany', '250': 'France', '380': 'Italy', '724': 'Spain',
+  '528': 'Netherlands', '056': 'Belgium', '756': 'Switzerland', '040': 'Austria',
+  '616': 'Poland', '752': 'Sweden', '578': 'Norway', '208': 'Denmark',
+  '246': 'Finland', '620': 'Portugal', '300': 'Greece', '642': 'Romania', '203': 'Czech Republic',
+  '826': 'United Kingdom', '372': 'Ireland',
+  '682': 'Saudi Arabia', '784': 'UAE', '634': 'Qatar', '414': 'Kuwait',
+  '512': 'Oman', '048': 'Bahrain', '400': 'Jordan', '422': 'Lebanon',
+  '376': 'Israel', '818': 'Egypt', '792': 'Turkey',
+  '156': 'China', '392': 'Japan', '410': 'South Korea', '356': 'India',
+  '036': 'Australia', '554': 'New Zealand', '360': 'Indonesia', '764': 'Thailand',
+  '704': 'Vietnam', '608': 'Philippines', '458': 'Malaysia', '702': 'Singapore',
+  '076': 'Brazil', '032': 'Argentina', '152': 'Chile', '170': 'Colombia', '604': 'Peru',
+};
+
 /**
  * ISO 3166-1 numeric country code → RegionId.
  * ~40 key markets so the choropleth has meaningful coverage.

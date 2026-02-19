@@ -38,6 +38,7 @@ export interface Campaign {
   objective: CampaignObjective;
   status: CampaignStatus;
   channels: ChannelId[];
+  countries: string[]; // ISO 3166-1 numeric codes
   startDate: string;
   plannedBudget: number;
 }
