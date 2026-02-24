@@ -50,8 +50,8 @@ const INITIAL_LAYERS: SceneLayer[] = [
   { id: "dome", name: "Dome Light", icon: Sun, visible: true, locked: false },
   { id: "key", name: "Key Light", icon: Lightbulb, visible: true, locked: false },
   { id: "area", name: "Area Light", icon: LayoutGrid, visible: true, locked: false },
-  { id: "356", name: "356 Speedster", icon: Box, visible: true, locked: true },
-  { id: "taycan", name: "Taycan", icon: Box, visible: true, locked: true },
+  { id: "sapphire", name: "Sapphire Card", icon: Box, visible: true, locked: true },
+  { id: "shield", name: "JP Morgan Shield", icon: Box, visible: true, locked: true },
   { id: "paint", name: "Paint Splashes", icon: Layers, visible: true, locked: false },
   { id: "headline", name: "Headline Text", icon: Type, visible: true, locked: false },
   { id: "bg", name: "Background", icon: Image, visible: true, locked: false },
@@ -66,8 +66,8 @@ const LAYER_CATEGORIES: Record<string, LayerCategory> = {
   dome: "lighting",
   key: "lighting",
   area: "lighting",
-  "356": "product",
-  taycan: "product",
+  sapphire: "product",
+  shield: "product",
   paint: "effects",
   headline: "copy",
   bg: "background",
@@ -105,7 +105,7 @@ export default function CreativeStudioPage() {
   const [selectedBgPreset, setSelectedBgPreset] = useState("rose");
   const [selectedProductAngle, setSelectedProductAngle] = useState("3-quarter");
   const [selectedProductColor, setSelectedProductColor] = useState("white");
-  const [headlineText, setHeadlineText] = useState("ORIGINAL\nNEVER FADES.");
+  const [headlineText, setHeadlineText] = useState("YOUR FUTURE.\nOUR COMMITMENT.");
   const [selectedFont, setSelectedFont] = useState("Impact");
   const [fontSize, setFontSize] = useState(72);
   const [effectIntensity, setEffectIntensity] = useState(80);
@@ -192,7 +192,7 @@ export default function CreativeStudioPage() {
           </div>
           <div>
             <div className="flex items-center gap-1">
-              <span className="text-sm font-semibold">Original Never Fades</span>
+              <span className="text-sm font-semibold">Your Future Our Commitment</span>
               <ChevronDown className="h-3 w-3 text-muted-foreground" />
             </div>
             <p className="text-[10px] text-muted-foreground">Ad Campaign Project</p>
@@ -540,7 +540,7 @@ export default function CreativeStudioPage() {
                 </div>
                 <div className="relative rounded-lg overflow-hidden shadow-2xl shadow-black/40">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/creative-hero.jpg" alt="Original Never Fades — Porsche campaign creative" className="w-[580px] h-auto block select-none" draggable={false} />
+                  <img src="/creative-hero.jpg" alt="Your Future Our Commitment — JP Morgan campaign creative" className="w-[580px] h-auto block select-none" draggable={false} />
                   <div className="absolute inset-0 border-2 border-teal/60 rounded-lg pointer-events-none">
                     <div className="absolute -top-1.5 -left-1.5 w-3 h-3 bg-teal rounded-sm border border-card" />
                     <div className="absolute -top-1.5 -right-1.5 w-3 h-3 bg-teal rounded-sm border border-card" />
@@ -590,15 +590,15 @@ export default function CreativeStudioPage() {
               >
                 <div className="absolute -top-8 left-0 flex items-center gap-2">
                   <span className="text-[11px] font-bold text-pink-400 bg-pink-500/10 border border-pink-500/20 rounded-md px-2.5 py-1">VARIANT B</span>
-                  <span className="text-[10px] text-muted-foreground/50">Copy: &quot;Legends Don&apos;t Fade&quot;</span>
+                  <span className="text-[10px] text-muted-foreground/50">Copy: &quot;Invest With Confidence&quot;</span>
                 </div>
                 <div className="relative rounded-lg overflow-hidden shadow-xl shadow-black/30 border border-pink-500/30">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/variant-pink.png" alt="Variant B — Legends Don't Fade" className="w-[580px] h-auto block select-none" draggable={false} />
+                  <img src="/variant-pink.png" alt="Variant B — Invest With Confidence" className="w-[580px] h-auto block select-none" draggable={false} />
                 </div>
               </div>
 
-              {/* ─── Variant C — Cayenne (bottom-right) ─── */}
+              {/* ─── Variant C — Private Banking (bottom-right) ─── */}
               <div
                 className="absolute"
                 style={{
@@ -612,11 +612,11 @@ export default function CreativeStudioPage() {
               >
                 <div className="absolute -top-8 left-0 flex items-center gap-2">
                   <span className="text-[11px] font-bold text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-md px-2.5 py-1">VARIANT C</span>
-                  <span className="text-[10px] text-muted-foreground/50">Model: Cayenne Swap</span>
+                  <span className="text-[10px] text-muted-foreground/50">Product: Private Banking</span>
                 </div>
                 <div className="relative rounded-lg overflow-hidden shadow-xl shadow-black/30 border border-amber-500/30">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/variant-cayenne.png" alt="Variant C — Cayenne model swap" className="w-[580px] h-auto block select-none" draggable={false} />
+                  <img src="/variant-cayenne.png" alt="Variant C — Private Banking product swap" className="w-[580px] h-auto block select-none" draggable={false} />
                 </div>
               </div>
             </div>
@@ -818,14 +818,14 @@ export default function CreativeStudioPage() {
                     </div>
                     <div className="grid grid-cols-2 gap-2">
                       {[
-                        { id: "taycan", label: "Taycan Turbo GT" },
-                        { id: "356", label: "356 Speedster" },
-                        { id: "911", label: "911 Carrera" },
-                        { id: "cayenne", label: "Cayenne" },
+                        { id: "sapphire", label: "Sapphire Reserve" },
+                        { id: "shield", label: "JP Morgan Shield" },
+                        { id: "private", label: "Private Banking" },
+                        { id: "wealth", label: "Wealth Mgmt" },
                       ].map((model) => (
                         <div key={model.id} className={cn(
                           "p-2.5 rounded-xl border cursor-pointer transition-all text-center",
-                          (selectedLayer === model.id || (selectedLayer === "taycan" && model.id === "taycan") || (selectedLayer === "356" && model.id === "356"))
+                          (selectedLayer === model.id || (selectedLayer === "sapphire" && model.id === "sapphire") || (selectedLayer === "shield" && model.id === "shield"))
                             ? "border-teal bg-teal/5 text-teal"
                             : "border-border/20 bg-muted/20 text-muted-foreground hover:border-border/40"
                         )}>
@@ -864,9 +864,9 @@ export default function CreativeStudioPage() {
                       {[
                         { id: "white", color: "#E8E8E8", label: "White" },
                         { id: "black", color: "#1A1A1A", label: "Black" },
-                        { id: "red", color: "#B91C1C", label: "Guards Red" },
-                        { id: "blue", color: "#1E40AF", label: "Gentian Blue" },
-                        { id: "green", color: "#166534", label: "Irish Green" },
+                        { id: "navy", color: "#002D72", label: "JPM Navy" },
+                        { id: "gold", color: "#B8860B", label: "Reserve Gold" },
+                        { id: "slate", color: "#4A5568", label: "Slate" },
                       ].map((c) => (
                         <button key={c.id} onClick={() => setSelectedProductColor(c.id)} title={c.label}
                           className={cn(
@@ -969,7 +969,7 @@ export default function CreativeStudioPage() {
                       <p className="text-xs font-semibold">AI Copy Variants</p>
                     </div>
                     <div className="space-y-1.5">
-                      {["LEGENDS DON'T FADE.", "BUILT TO LAST.", "TIMELESS BY DESIGN."].map((variant) => (
+                      {["INVEST WITH CONFIDENCE.", "BUILT ON TRUST.", "YOUR LEGACY STARTS HERE."].map((variant) => (
                         <div key={variant} className="flex items-center gap-2 p-2.5 rounded-lg bg-muted/20 border border-border/20 cursor-pointer hover:border-teal/30 hover:bg-teal/5 transition-colors">
                           <Sparkles className="h-3 w-3 text-teal/50 shrink-0" />
                           <span className="text-[11px] font-semibold truncate">{variant}</span>

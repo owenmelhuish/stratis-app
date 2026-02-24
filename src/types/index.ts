@@ -158,7 +158,7 @@ export type UserRole = 'agency' | 'exec';
 export type ViewLevel = 'brand' | 'region' | 'campaign';
 
 // ===== News =====
-export type NewsTag = 'competitor' | 'category' | 'platform' | 'macro';
+export type NewsTag = 'brand' | 'competitor' | 'category' | 'platform' | 'macro' | 'audience' | 'regulation' | 'tech-disruption' | 'macroeconomic';
 export type NewsUrgency = 'low' | 'medium' | 'high';
 
 export interface NewsItem {

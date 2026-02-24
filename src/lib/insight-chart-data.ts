@@ -112,7 +112,7 @@ export function generateInsightChartData(
   }
 
   // Generate ad set data for budget action steps
-  const adSetNames = ['Lookalike – US', 'Interest – Auto Intenders', 'Retarget – Site Visitors', 'Broad – 25-54', 'Custom – CRM Match'];
+  const adSetNames = ['Lookalike – US HNW', 'Interest – Financial Planners', 'Retarget – Site Visitors', 'Broad – Affluent 25-54', 'Custom – Client CRM Match'];
   const numSets = 3 + (seed % 3);
   const adSets: AdSetData[] = [];
   for (let i = 0; i < numSets; i++) {

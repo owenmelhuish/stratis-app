@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "STRATIS — Porsche Prototype",
+  title: "STRATIS — JP Morgan Prototype",
   description: "Unified intelligence layer for global campaign performance",
 };
 

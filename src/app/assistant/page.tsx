@@ -57,7 +57,7 @@ function getAIResponse(userMessage: string): string {
 **Top Performers:**
 1. **Google Search — Brand Terms** — 42.1x ROAS, $89K spend
 2. **Meta — Retargeting** — 31.7x ROAS, $54K spend
-3. **TikTok — Taycan Launch** — 18.3x ROAS, $67K spend
+3. **TikTok — Sapphire Reserve Launch** — 18.3x ROAS, $67K spend
 
 **Needs Attention:**
 - TTD Programmatic display CPA is up 12% — recommend reducing frequency cap
@@ -102,14 +102,14 @@ Want me to create an implementation plan for any of these?`;
     return `Here's what I'm seeing across your audience segments:
 
 **Top Converting Audiences:**
-- **In-Market: Luxury Vehicles (25-44)** — 3.8% CVR, $12.40 CPA
-- **Retargeting: Configurator Visitors** — 6.2% CVR, $8.90 CPA
-- **Lookalike: Past Purchasers 1%** — 2.1% CVR, $18.60 CPA
+- **In-Market: Wealth Management (25-54)** — 3.8% CVR, $12.40 CPA
+- **Retargeting: Product Page Visitors** — 6.2% CVR, $8.90 CPA
+- **Lookalike: Existing Clients 1%** — 2.1% CVR, $18.60 CPA
 
 **Emerging Opportunity:**
-The 35-54 age group on TikTok is showing a 340% increase in engagement over the past 30 days. This demographic wasn't previously a primary target on the platform but is responding strongly to the "Original Never Fades" heritage messaging.
+The 35-54 age group on TikTok is showing a 340% increase in engagement over the past 30 days. This demographic wasn't previously a primary target on the platform but is responding strongly to the "Your Future, Our Commitment" brand messaging.
 
-**Recommendation:** Create a TikTok ad set specifically targeting 35-54 with heritage-focused creatives. Estimated incremental reach: 2.8M uniques/month.
+**Recommendation:** Create a TikTok ad set specifically targeting 35-54 with trust-focused creatives. Estimated incremental reach: 2.8M uniques/month.
 
 Shall I draft a targeting strategy?`;
   }
@@ -118,7 +118,7 @@ Shall I draft a targeting strategy?`;
 
 Based on your current campaign data across all channels, I can see several patterns worth highlighting:
 
-- Your overall portfolio ROAS of 20.9x is strong and above the automotive luxury benchmark of 15-18x
+- Your overall portfolio ROAS of 20.9x is strong and above the financial services benchmark of 15-18x
 - Spend pacing is on track at 94% of monthly budget with 8 days remaining
 - 3 campaigns have been flagged for creative refresh based on declining engagement metrics
 

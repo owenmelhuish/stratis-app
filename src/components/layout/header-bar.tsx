@@ -315,7 +315,7 @@ export function HeaderBar() {
       <div className="flex items-center justify-between px-8 h-12">
         <div className="flex items-center gap-1.5 min-w-0">
           <button onClick={() => { setSelectedRegion(null); setSelectedCampaign(null); }} className="text-sm font-semibold text-foreground hover:text-teal transition-colors">
-            Porsche
+            JP Morgan
           </button>
           {selectedRegion && (
             <>
