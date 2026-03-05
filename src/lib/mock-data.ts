@@ -49,7 +49,7 @@ function gaussian(): number {
 const END_DATE = new Date('2026-02-11');
 const DATA_DAYS = 180;
 const START_DATE = subDays(END_DATE, DATA_DAYS - 1);
-const ALL_REGIONS: RegionId[] = ['north-america', 'europe', 'uk', 'middle-east', 'apac', 'latam'];
+const ALL_REGIONS: RegionId[] = ['north-america'];
 const ALL_CHANNELS: ChannelId[] = ['instagram', 'facebook', 'tiktok', 'google-search', 'ttd'];
 
 // ===== Channel Profiles =====
@@ -66,62 +66,55 @@ interface ChannelProfile {
 }
 
 const CHANNEL_PROFILES: Record<ChannelId, ChannelProfile> = {
-  'google-search': { baseSpend: 1200, cpmRange: [15, 30], ctrRange: [4, 8], cvrRange: [6, 10], cpcRange: [2, 5], videoViewRate: 0, videoCompletionRate: 0, engagementMultiplier: 0.5, volatility: 0.15 },
-  'facebook': { baseSpend: 1000, cpmRange: [8, 18], ctrRange: [1.2, 2.5], cvrRange: [2.5, 5], cpcRange: [0.8, 2.5], videoViewRate: 0.3, videoCompletionRate: 0.25, engagementMultiplier: 1.2, volatility: 0.12 },
-  'instagram': { baseSpend: 900, cpmRange: [8, 20], ctrRange: [1, 2.2], cvrRange: [2.5, 4.5], cpcRange: [1, 3], videoViewRate: 0.4, videoCompletionRate: 0.3, engagementMultiplier: 1.5, volatility: 0.1 },
-  'tiktok': { baseSpend: 700, cpmRange: [5, 15], ctrRange: [0.8, 2], cvrRange: [1.5, 3.5], cpcRange: [0.5, 2], videoViewRate: 0.8, videoCompletionRate: 0.15, engagementMultiplier: 2.0, volatility: 0.25 },
-  'ttd': { baseSpend: 1500, cpmRange: [5, 15], ctrRange: [0.3, 1], cvrRange: [1, 2.5], cpcRange: [1, 4], videoViewRate: 0.2, videoCompletionRate: 0.2, engagementMultiplier: 0.3, volatility: 0.08 },
+  'google-search': { baseSpend: 2085, cpmRange: [15, 30], ctrRange: [4, 8], cvrRange: [6, 10], cpcRange: [2, 5], videoViewRate: 0, videoCompletionRate: 0, engagementMultiplier: 0.5, volatility: 0.15 },
+  'facebook': { baseSpend: 1730, cpmRange: [8, 18], ctrRange: [1.2, 2.5], cvrRange: [2.5, 5], cpcRange: [0.8, 2.5], videoViewRate: 0.3, videoCompletionRate: 0.25, engagementMultiplier: 1.2, volatility: 0.12 },
+  'instagram': { baseSpend: 1535, cpmRange: [8, 20], ctrRange: [1, 2.2], cvrRange: [2.5, 4.5], cpcRange: [1, 3], videoViewRate: 0.4, videoCompletionRate: 0.3, engagementMultiplier: 1.5, volatility: 0.1 },
+  'tiktok': { baseSpend: 1185, cpmRange: [5, 15], ctrRange: [0.8, 2], cvrRange: [1.5, 3.5], cpcRange: [0.5, 2], videoViewRate: 0.8, videoCompletionRate: 0.15, engagementMultiplier: 2.0, volatility: 0.25 },
+  'ttd': { baseSpend: 2570, cpmRange: [5, 15], ctrRange: [0.3, 1], cvrRange: [1, 2.5], cpcRange: [1, 4], videoViewRate: 0.2, videoCompletionRate: 0.2, engagementMultiplier: 0.3, volatility: 0.08 },
 };
 
 // ===== Region multipliers =====
 const REGION_MULTIPLIERS: Record<RegionId, number> = {
   'north-america': 1.4,
-  'europe': 1.2,
-  'uk': 0.8,
-  'middle-east': 0.6,
-  'apac': 1.0,
-  'latam': 0.5,
 };
 
 // ===== Campaign definitions =====
 interface CampaignDef {
   id: string; name: string; region: RegionId; objective: CampaignObjective;
   status: CampaignStatus; channels: ChannelId[]; budgetMultiplier: number;
-  countries: string[];
+  countries: string[]; plannedBudget: number;
 }
 
 const CAMPAIGN_DEFS: CampaignDef[] = [
-  // North America (840=USA, 124=Canada, 484=Mexico)
-  { id: 'na-sapphire-launch', name: 'NA Sapphire Reserve Launch', region: 'north-america', objective: 'awareness', status: 'live', channels: ['instagram', 'facebook', 'tiktok', 'ttd'], budgetMultiplier: 1.5, countries: ['840', '124', '484'] },
-  { id: 'na-private-banking', name: 'NA Private Banking Acquisition', region: 'north-america', objective: 'performance', status: 'live', channels: ['google-search', 'facebook', 'instagram'], budgetMultiplier: 1.2, countries: ['840', '124'] },
-  { id: 'na-wealth-mgmt', name: 'NA Wealth Management', region: 'north-america', objective: 'consideration', status: 'live', channels: ['instagram', 'tiktok', 'ttd', 'facebook'], budgetMultiplier: 1.0, countries: ['840'] },
-  { id: 'na-commercial-retarget', name: 'NA Commercial Lending Retargeting', region: 'north-america', objective: 'performance', status: 'paused', channels: ['google-search', 'facebook', 'ttd'], budgetMultiplier: 0.7, countries: ['840', '124'] },
-  { id: 'na-brand-always-on', name: 'NA Brand Always-On', region: 'north-america', objective: 'awareness', status: 'live', channels: ['instagram', 'facebook', 'tiktok', 'google-search', 'ttd'], budgetMultiplier: 0.9, countries: ['840', '124', '484'] },
-  // Europe (276=Germany, 250=France, 380=Italy, 724=Spain, 528=Netherlands, 756=Switzerland, 752=Sweden, 578=Norway)
-  { id: 'eu-private-heritage', name: 'EU Private Banking Heritage', region: 'europe', objective: 'awareness', status: 'live', channels: ['instagram', 'facebook', 'tiktok', 'ttd'], budgetMultiplier: 1.3, countries: ['276', '250', '380', '724', '528'] },
-  { id: 'eu-asset-mgmt', name: 'EU Asset Management', region: 'europe', objective: 'performance', status: 'live', channels: ['google-search', 'facebook', 'instagram', 'ttd'], budgetMultiplier: 1.1, countries: ['276', '756', '528'] },
-  { id: 'eu-wealth-exec', name: 'EU Wealth Management Executive', region: 'europe', objective: 'consideration', status: 'live', channels: ['facebook', 'google-search', 'ttd'], budgetMultiplier: 0.8, countries: ['276', '250', '380'] },
-  { id: 'eu-winter-campaign', name: 'EU Year-End Planning', region: 'europe', objective: 'awareness', status: 'paused', channels: ['instagram', 'tiktok', 'facebook'], budgetMultiplier: 0.6, countries: ['752', '578', '756'] },
-  // UK (826=United Kingdom, 372=Ireland)
-  { id: 'uk-wealth-mgmt', name: 'UK Wealth Management', region: 'uk', objective: 'consideration', status: 'live', channels: ['instagram', 'facebook', 'google-search', 'ttd'], budgetMultiplier: 1.0, countries: ['826', '372'] },
-  { id: 'uk-asset-digital', name: 'UK Asset Management Digital', region: 'uk', objective: 'performance', status: 'live', channels: ['google-search', 'facebook', 'ttd'], budgetMultiplier: 1.1, countries: ['826'] },
-  { id: 'uk-private-heritage', name: 'UK Private Banking Heritage', region: 'uk', objective: 'awareness', status: 'live', channels: ['instagram', 'tiktok', 'facebook'], budgetMultiplier: 0.7, countries: ['826', '372'] },
-  { id: 'uk-sapphire-launch', name: 'UK Sapphire Launch', region: 'uk', objective: 'awareness', status: 'live', channels: ['instagram', 'facebook', 'tiktok', 'google-search', 'ttd'], budgetMultiplier: 1.2, countries: ['826'] },
-  // Middle East (682=Saudi Arabia, 784=UAE, 634=Qatar, 414=Kuwait, 512=Oman)
-  { id: 'me-wealth-luxury', name: 'ME Wealth Management Luxury', region: 'middle-east', objective: 'awareness', status: 'live', channels: ['instagram', 'tiktok', 'ttd'], budgetMultiplier: 1.0, countries: ['784', '682', '634'] },
-  { id: 'me-private-elite', name: 'ME Private Banking Elite', region: 'middle-east', objective: 'performance', status: 'live', channels: ['google-search', 'instagram', 'facebook'], budgetMultiplier: 0.9, countries: ['784', '682'] },
-  { id: 'me-asset-mgmt', name: 'ME Asset Management', region: 'middle-east', objective: 'consideration', status: 'live', channels: ['tiktok', 'instagram', 'ttd'], budgetMultiplier: 0.8, countries: ['784', '414', '512'] },
-  { id: 'me-commercial-vip', name: 'ME Commercial Banking VIP', region: 'middle-east', objective: 'performance', status: 'paused', channels: ['google-search', 'facebook'], budgetMultiplier: 0.5, countries: ['682', '634'] },
-  // APAC (156=China, 392=Japan, 410=South Korea, 036=Australia, 702=Singapore)
-  { id: 'apac-sapphire-launch', name: 'APAC Sapphire Launch', region: 'apac', objective: 'awareness', status: 'live', channels: ['instagram', 'facebook', 'tiktok', 'ttd'], budgetMultiplier: 1.3, countries: ['156', '392', '410', '036'] },
-  { id: 'apac-wealth-family', name: 'APAC Wealth Management Family', region: 'apac', objective: 'consideration', status: 'live', channels: ['facebook', 'instagram', 'google-search'], budgetMultiplier: 0.9, countries: ['156', '036', '702'] },
-  { id: 'apac-private-premium', name: 'APAC Private Banking Premium', region: 'apac', objective: 'performance', status: 'live', channels: ['google-search', 'instagram', 'tiktok'], budgetMultiplier: 0.8, countries: ['392', '410'] },
-  { id: 'apac-brand-digital', name: 'APAC Brand Digital', region: 'apac', objective: 'awareness', status: 'live', channels: ['tiktok', 'instagram', 'ttd', 'facebook'], budgetMultiplier: 0.7, countries: ['156', '392', '036', '702', '410'] },
-  // LATAM (076=Brazil, 032=Argentina, 152=Chile, 170=Colombia, 604=Peru)
-  { id: 'latam-wealth-urban', name: 'LATAM Wealth Management Urban', region: 'latam', objective: 'consideration', status: 'live', channels: ['instagram', 'facebook', 'tiktok'], budgetMultiplier: 0.8, countries: ['076', '032', '170'] },
-  { id: 'latam-private-legacy', name: 'LATAM Private Banking Legacy', region: 'latam', objective: 'awareness', status: 'live', channels: ['instagram', 'tiktok', 'ttd'], budgetMultiplier: 0.7, countries: ['076', '152'] },
-  { id: 'latam-asset-esg', name: 'LATAM Asset Management ESG', region: 'latam', objective: 'performance', status: 'live', channels: ['google-search', 'facebook'], budgetMultiplier: 0.6, countries: ['076', '032', '604'] },
-  { id: 'latam-commercial-growth', name: 'LATAM Commercial Banking Growth', region: 'latam', objective: 'awareness', status: 'paused', channels: ['instagram', 'facebook', 'tiktok', 'ttd'], budgetMultiplier: 0.5, countries: ['076', '170', '152', '032'] },
+  // Deep Water movie launch — 40% Seed Superfans, 10% each for the other 6
+  // Cast a Wide Net (10%) — broad national awareness
+  { id: 'dw-cast-wide-net', name: 'Cast a Wide Net', region: 'north-america', objective: 'awareness', status: 'live',
+    channels: ['instagram', 'facebook', 'ttd'], budgetMultiplier: 0.6286, plannedBudget: 930000,
+    countries: ['36', '06', '48', '12', '17', '39', '42', '34', '13', '25', '51', '53', '08', '04', '37', '26', '27', '24', '47', '55'] },
+  // Amplify Fear (10%) — horror/thriller social push
+  { id: 'dw-amplify-fear', name: 'Amplify Fear', region: 'north-america', objective: 'awareness', status: 'live',
+    channels: ['instagram', 'facebook', 'tiktok', 'ttd'], budgetMultiplier: 0.5231, plannedBudget: 930000,
+    countries: ['36', '06', '48', '12', '17', '39', '42', '34', '13', '25', '51', '53', '08', '04', '37'] },
+  // Seed Superfans (40%) — largest campaign, full-funnel national
+  { id: 'dw-seed-superfans', name: 'Seed Superfans', region: 'north-america', objective: 'performance', status: 'live',
+    channels: ['instagram', 'facebook', 'tiktok', 'google-search', 'ttd'], budgetMultiplier: 1.6116, plannedBudget: 3720000,
+    countries: ['36', '06', '12', '42', '34', '25', '48', '17', '39', '13', '37', '51', '53', '08', '04', '24', '27', '41', '47', '26', '29', '55', '45', '18', '21', '22', '32', '49', '40', '01'] },
+  // Thrill Seekers (10%) — niche horror/action audience
+  { id: 'dw-thrill-seekers', name: 'Thrill Seekers', region: 'north-america', objective: 'consideration', status: 'live',
+    channels: ['instagram', 'tiktok'], budgetMultiplier: 1.349, plannedBudget: 930000,
+    countries: ['36', '06', '48', '12', '17', '13', '39', '42', '37', '51'] },
+  // Big Screen Chasers (10%) — theatrical moviegoers
+  { id: 'dw-big-screen-chasers', name: 'Big Screen Chasers', region: 'north-america', objective: 'consideration', status: 'live',
+    channels: ['facebook', 'google-search'], budgetMultiplier: 0.9619, plannedBudget: 930000,
+    countries: ['36', '06', '48', '12', '17', '42', '25', '13', '34', '39', '51', '53'] },
+  // Adrenaline Athletes (10%) — action/sports audience crossover
+  { id: 'dw-adrenaline-athletes', name: 'Adrenaline Athletes', region: 'north-america', objective: 'consideration', status: 'live',
+    channels: ['instagram', 'tiktok'], budgetMultiplier: 1.349, plannedBudget: 930000,
+    countries: ['36', '06', '08', '53', '04', '32', '12', '48', '41', '37'] },
+  // Opening Weekend Superfans (10%) — intent-driven conversion
+  { id: 'dw-opening-weekend', name: 'Opening Weekend Superfans', region: 'north-america', objective: 'performance', status: 'live',
+    channels: ['google-search', 'instagram'], budgetMultiplier: 1.0136, plannedBudget: 930000,
+    countries: ['36', '06', '48', '12', '17', '42', '25', '34'] },
 ];
 
 // ===== Events (anomaly generators) =====
@@ -131,12 +124,11 @@ interface DataEvent {
 }
 
 const DATA_EVENTS: DataEvent[] = [
-  { name: 'Sapphire Reserve Launch', dayOffset: 45, duration: 7, regions: ['north-america', 'europe', 'uk'], spendMult: 1.8, cvrMult: 1.3, engageMult: 2.0 },
-  { name: 'Competitive Surge Goldman Sachs', dayOffset: 90, duration: 10, regions: ['europe'], spendMult: 1.0, cvrMult: 0.8, engageMult: 0.7 },
-  { name: 'APAC Economic Softness', dayOffset: 120, duration: 14, regions: ['apac'], spendMult: 0.9, cvrMult: 0.65, engageMult: 0.85 },
-  { name: 'Year-End Financial Planning Surge', dayOffset: 70, duration: 14, regions: ALL_REGIONS, spendMult: 1.3, cvrMult: 1.15, engageMult: 1.4 },
+  { name: 'Trailer #2 Drop', dayOffset: 45, duration: 7, regions: ['north-america'], spendMult: 1.8, cvrMult: 1.3, engageMult: 2.0 },
+  { name: 'Competing Film Release', dayOffset: 90, duration: 10, regions: ['north-america'], spendMult: 1.0, cvrMult: 0.8, engageMult: 0.7 },
+  { name: 'Awards Season Buzz', dayOffset: 70, duration: 14, regions: ALL_REGIONS, spendMult: 1.3, cvrMult: 1.15, engageMult: 1.4 },
   { name: 'TikTok Algorithm Shift', dayOffset: 100, duration: 5, regions: ALL_REGIONS, spendMult: 1.0, cvrMult: 0.75, engageMult: 1.6 },
-  { name: 'Q4 Budget Push', dayOffset: 150, duration: 10, regions: ['north-america', 'europe'], spendMult: 1.5, cvrMult: 1.1, engageMult: 1.1 },
+  { name: 'Opening Weekend Push', dayOffset: 150, duration: 10, regions: ['north-america'], spendMult: 1.5, cvrMult: 1.1, engageMult: 1.1 },
 ];
 
 // ===== Data Generation =====
@@ -261,7 +253,7 @@ export function aggregateMetrics(dailyData: DailyMetrics[]): AggregatedKPIs {
 
   const brandSearchLift = 50 + rng() * 50;
   const shareOfVoice = 10 + rng() * 30;
-  const budgetPacing = 85 + rng() * 30;
+  const budgetPacing = 82 + rng() * 13;
   const creativeFatigueIndex = 20 + rng() * 60;
 
   return {
@@ -341,73 +333,135 @@ function detectAnomalies(dailyData: Record<string, Record<string, DailyMetrics[]
 }
 
 // ===== News Generation =====
-const NEWS_SOURCES = ['Financial Times', 'Reuters', 'AdAge', 'Bloomberg', 'Wall Street Journal', 'Campaign', 'The Drum'];
-const COMPETITORS = ['Goldman Sachs', 'Morgan Stanley', 'Bank of America', 'Citigroup', 'Wells Fargo'];
+const NEWS_SOURCES = ['Variety', 'Deadline', 'The Hollywood Reporter', 'Entertainment Weekly', 'IndieWire', 'Screen Rant', 'Collider'];
+const COMPETITORS = ['Devil Wears Prada 2', 'Mission Impossible 8', 'Thunderbolts*', 'The Beast (Netflix)', 'A Quiet Place: Day One'];
 
 function generateNews(): NewsItem[] {
   const items: NewsItem[] = [];
   const templates: Array<{
     titleTemplate: (c?: string) => string; tags: NewsTag[]; urgency: NewsUrgency;
-    summary: string; whyItMatters: string; competitor?: boolean;
+    summary: string; whyItMatters: string; competitor?: string;
   }> = [
-    // ── Brand News (JP Morgan mentions) ──
-    { titleTemplate: () => 'JP Morgan Chase Reports Record Q1 Revenue of $42.4B Driven by Consumer Banking Growth', tags: ['brand'], urgency: 'high', summary: 'JP Morgan Chase reported record first-quarter revenue, surpassing analyst expectations by 8%, driven by strong consumer banking and net interest income.', whyItMatters: 'Strong earnings provide ammunition for brand trust messaging and market leadership positioning in campaigns.' },
-    { titleTemplate: () => 'JP Morgan Launches Next-Gen Sapphire Reserve Card With Enhanced Travel Benefits', tags: ['brand'], urgency: 'high', summary: 'JP Morgan has unveiled an upgraded Sapphire Reserve card featuring new travel perks, dining rewards, and a redesigned metal card to compete with Amex Platinum.', whyItMatters: 'Major product launch — all Sapphire campaigns should align messaging with new benefits and creative assets.' },
-    { titleTemplate: () => 'JP Morgan Wealth Management Surpasses $4 Trillion in Client Assets', tags: ['brand'], urgency: 'medium', summary: 'JP Morgan\'s wealth management division has crossed the $4 trillion AUM milestone, cementing its position as the largest US wealth manager.', whyItMatters: 'AUM milestone supports credibility messaging — feature in Private Banking and Wealth Management campaigns.' },
-    { titleTemplate: () => 'JP Morgan Named "World\'s Best Digital Bank" by Global Finance Magazine', tags: ['brand'], urgency: 'medium', summary: 'Global Finance Magazine has awarded JP Morgan Chase its top honor for digital banking innovation, citing the Chase mobile app and digital onboarding experience.', whyItMatters: 'Award recognition should be leveraged in digital-first campaign creative and landing pages.' },
-    { titleTemplate: () => 'JP Morgan CEO Jamie Dimon Highlights AI Investment in Annual Shareholder Letter', tags: ['brand'], urgency: 'medium', summary: 'In his annual letter, Jamie Dimon outlined JP Morgan\'s $2B AI investment strategy, positioning the firm as a leader in financial technology innovation.', whyItMatters: 'CEO thought leadership creates PR momentum — amplify via thought leadership and brand awareness campaigns.' },
-    { titleTemplate: () => 'JP Morgan Expands Private Banking Operations Across Southeast Asia', tags: ['brand'], urgency: 'high', summary: 'JP Morgan is opening new private banking offices in Singapore, Bangkok, and Jakarta as part of a major APAC wealth management expansion.', whyItMatters: 'APAC expansion supports scaling Private Banking campaigns in the region with local market credibility.' },
-    { titleTemplate: () => 'JP Morgan Reports 23% YoY Increase in Mobile Banking Active Users', tags: ['brand'], urgency: 'low', summary: 'Chase mobile app active users have grown to 67 million, with transaction volumes up 31% year-over-year across all consumer banking products.', whyItMatters: 'Growing digital engagement validates mobile-first campaign strategies and app-download CTAs.' },
-    { titleTemplate: () => 'JP Morgan Chase Foundation Commits $500M to Affordable Housing Initiative', tags: ['brand'], urgency: 'low', summary: 'The JP Morgan Chase Foundation has announced a $500 million commitment to affordable housing and community development across underserved US markets.', whyItMatters: 'CSR initiatives enhance brand perception — consider integrating into purpose-driven brand awareness campaigns.' },
-    { titleTemplate: () => 'JP Morgan Commercial Banking Opens New Innovation Hub in Dallas', tags: ['brand'], urgency: 'low', summary: 'JP Morgan\'s commercial banking division has opened a new innovation and technology hub in Dallas, creating 2,000 jobs and expanding regional capabilities.', whyItMatters: 'Regional expansion news supports geo-targeted commercial banking campaigns in the South Central US market.' },
-    { titleTemplate: () => 'JP Morgan Partners With Formula E as Official Banking Partner', tags: ['brand'], urgency: 'medium', summary: 'JP Morgan has signed a multi-year sponsorship deal with Formula E, aligning the brand with sustainability and premium sports marketing.', whyItMatters: 'Sponsorship deal creates new content opportunities — integrate Formula E assets into awareness and lifestyle campaigns.' },
+    // ── 1. Emerging Conversation (exactly 3 — Reddit/social mentions of "Deep Water") ──
+    { titleTemplate: () => 'r/movies: "Deep Water looks insane — the practical underwater stunts are giving Jaws vibes"', tags: ['brand'], urgency: 'high', summary: 'A Reddit post on r/movies comparing Deep Water\'s practical effects to Jaws has reached 14.2K upvotes and 1,800+ comments, with users debating whether it could revive the ocean thriller genre.', whyItMatters: 'Organic Reddit hype signals core audience excitement — amplify with paid social targeting r/movies and film enthusiast lookalikes.' },
+    { titleTemplate: () => 'Deep Water Subway Takeover in NYC and LA Drives 12M Impressions in 48 Hours', tags: ['brand'], urgency: 'high', summary: 'A full subway station takeover in Times Square and Hollywood/Highland featuring immersive Deep Water ocean-themed wraps has generated 12M OOH impressions and gone viral on social media, with commuters sharing photos across Instagram and TikTok.', whyItMatters: 'OOH activations are driving outsized social amplification — experiential placements are earning 3-5x their paid value in organic reach.' },
+    { titleTemplate: () => 'r/boxoffice tracks Deep Water pre-sale mentions surging 280% week-over-week', tags: ['brand'], urgency: 'medium', summary: 'The r/boxoffice community is tracking a 280% week-over-week increase in Deep Water mentions, with multiple threads predicting a $35M+ opening weekend based on social momentum.', whyItMatters: 'Box office prediction communities influence wider media coverage — monitor sentiment and seed positive data points for earned media pickup.' },
 
-    { titleTemplate: (c) => `${c} Announces Major Wealth Management Expansion in ${pick(['North America', 'Europe', 'Asia'])}`, tags: ['competitor'], urgency: 'high', summary: `${pick(COMPETITORS)} is scaling up wealth management operations with a multi-billion dollar investment in new advisory centers.`, whyItMatters: 'Direct competitive pressure on JP Morgan Private Banking positioning and market share.', competitor: true },
-    { titleTemplate: () => 'TikTok Updates Creator Fund Algorithm for Finance Content', tags: ['platform'], urgency: 'medium', summary: 'TikTok is adjusting algorithm weights for financial content creators, potentially affecting organic reach for brand accounts.', whyItMatters: 'May impact TikTok campaign performance metrics and organic discovery.' },
-    { titleTemplate: () => 'Global Wealth Management AUM Rises 8% YoY in Latest Quarter', tags: ['category'], urgency: 'low', summary: 'Industry-wide assets under management show continued growth driven by strong demand in North America and Middle East markets.', whyItMatters: 'Positive macro trend supports increased investment in performance campaigns.' },
-    { titleTemplate: (c) => `${c} Launches Aggressive Digital Campaign Targeting JP Morgan Clients`, tags: ['competitor'], urgency: 'high', summary: `Competitive intelligence indicates ${pick(COMPETITORS)} is running conquest campaigns specifically targeting JP Morgan HNW prospects.`, whyItMatters: 'Defensive strategy needed in affected regions to protect market share.', competitor: true },
-    { titleTemplate: () => 'Meta Introduces New Advantage+ Creative Optimization', tags: ['platform'], urgency: 'medium', summary: 'Meta rolls out enhanced AI-driven creative optimization tools that could improve Facebook and Instagram campaign performance.', whyItMatters: 'New creative optimization features could reduce CPA across Meta channels.' },
-    { titleTemplate: () => 'Google Search Adds AI-Powered Financial Services Experience', tags: ['platform'], urgency: 'high', summary: 'Google is expanding AI-generated financial comparison results that could change how banking search ads appear in results.', whyItMatters: 'Search campaign strategy may need adjustment for new SERP layouts.' },
-    { titleTemplate: () => 'EU Proposes Stricter Digital Advertising Regulations', tags: ['macro'], urgency: 'medium', summary: 'European Parliament proposes new regulations on targeted digital advertising that could affect personalization capabilities.', whyItMatters: 'May require campaign targeting adjustments in European markets.' },
-    { titleTemplate: () => 'Middle East Private Banking Market Forecast Upgraded', tags: ['macro', 'category'], urgency: 'low', summary: 'Analysts upgrade Middle East wealth management forecast citing strong oil revenues and sovereign wealth fund growth.', whyItMatters: 'Opportunity to increase investment in Middle East performance campaigns.' },
-    { titleTemplate: () => 'APAC Currency Volatility Increases Marketing Costs', tags: ['macro'], urgency: 'high', summary: 'Currency fluctuations in APAC region are increasing effective CPMs and overall marketing costs.', whyItMatters: 'Budget pacing in APAC may need adjustment to maintain efficiency targets.' },
-    { titleTemplate: (c) => `${c} Reports Record Q4 Digital Ad Spend`, tags: ['competitor'], urgency: 'medium', summary: `${pick(COMPETITORS)} significantly increased digital advertising investment, signaling heightened competitive intensity.`, whyItMatters: 'Share of voice may decline without proportional spend increases.', competitor: true },
-    { titleTemplate: () => 'The Trade Desk Launches New CTV Targeting Features', tags: ['platform'], urgency: 'medium', summary: 'TTD introduces enhanced connected TV targeting capabilities with first-party data integration.', whyItMatters: 'New upper-funnel targeting options could improve awareness campaign efficiency.' },
-    { titleTemplate: () => 'Digital Banking Adoption Accelerates Beyond Forecasts', tags: ['category'], urgency: 'low', summary: 'Digital banking adoption rates exceed analyst expectations across all major markets.', whyItMatters: 'Supports increased investment in Sapphire-focused campaigns across regions.' },
-    { titleTemplate: () => 'Instagram Reels Engagement Surpasses TikTok in Key Demographics', tags: ['platform'], urgency: 'medium', summary: 'New data shows Instagram Reels outperforming TikTok for engagement among affluent financial decision-makers aged 35-54.', whyItMatters: 'Consider shifting video content budget allocation between platforms.' },
-    { titleTemplate: () => 'UK Financial Services Market Shows Signs of Recovery', tags: ['macro', 'category'], urgency: 'low', summary: 'UK financial services sector up 12% following post-Brexit regulatory stabilization.', whyItMatters: 'Favorable conditions for scaling UK campaign budgets.' },
-    { titleTemplate: () => 'LATAM Digital Ad Market Grows 25% YoY', tags: ['macro'], urgency: 'medium', summary: 'Latin American digital advertising market experiences rapid growth driven by increasing internet penetration.', whyItMatters: 'Growing addressable audience supports LATAM campaign expansion.' },
-    { titleTemplate: (c) => `${c} Shifts 40% of Budget to Performance Max`, tags: ['competitor'], urgency: 'medium', summary: `${pick(COMPETITORS)} reportedly moving significant budget to Google Performance Max campaigns.`, whyItMatters: 'Competitor adoption may increase auction pressure on Performance Max.', competitor: true },
-    { titleTemplate: () => 'New Privacy Regulations Impact Cross-Border Targeting', tags: ['macro', 'platform'], urgency: 'high', summary: 'New data privacy frameworks across multiple regions are limiting cross-border audience targeting capabilities.', whyItMatters: 'Regional targeting strategies need review for compliance and effectiveness.' },
-    { titleTemplate: () => 'Open Banking Data Opens New Marketing Channels', tags: ['category', 'platform'], urgency: 'low', summary: 'Financial institutions explore first-party open banking data for targeted marketing and customer retention.', whyItMatters: 'Potential new channel for existing client engagement and cross-sell campaigns.' },
+    // ── 2. Cast & Talent Signals (exactly 3 — one per talent, order: Eckhart → Gale → Kingsley) ──
+    { titleTemplate: () => 'Aaron Eckhart Talks Deep Water Role on The Tonight Show, Clip Goes Viral', tags: ['cast'], urgency: 'high', summary: 'Aaron Eckhart appeared on The Tonight Show discussing his preparation for Deep Water, including learning to hold his breath for 4 minutes. The segment has been viewed 6M+ times.', whyItMatters: 'Talk show virality creates earned media spike — amplify with paid video ads featuring Aaron Eckhart clips and quotes.' },
+    { titleTemplate: () => 'Kelly Gale Deep Water Interview Drives 800K Instagram Impressions', tags: ['cast'], urgency: 'high', summary: 'Kelly Gale\'s Instagram interview about her Deep Water role generated 800K impressions and 45K engagements, with strong response from 18-34 female audiences.', whyItMatters: 'Kelly Gale content resonates with younger demographics — feature in Seed Superfans and social-first creative.' },
+    { titleTemplate: () => 'Ben Kingsley Praised for Deep Water Performance in Early Press Reactions', tags: ['cast'], urgency: 'medium', summary: 'Early press screenings are singling out Ben Kingsley\'s performance as a standout, with critics calling it "his best work in a decade."', whyItMatters: 'Critical praise for cast strengthens credibility messaging — incorporate review quotes into Amplify Fear creative.' },
 
-    // ── Audience Behaviour ──
-    { titleTemplate: () => 'Gen Z Opens 40% More Brokerage Accounts Than Millennials Did at Same Age', tags: ['audience'], urgency: 'high', summary: 'New data from Deloitte shows Gen Z investors are opening brokerage accounts at record rates, driven by fintech apps and social media financial education.', whyItMatters: 'Opportunity to capture next-gen HNW clients early with targeted Sapphire and investing campaigns on TikTok and Instagram.' },
-    { titleTemplate: () => 'HNW Investors Shift to Mobile-First Financial Management', tags: ['audience'], urgency: 'medium', summary: 'A McKinsey study reveals 68% of high-net-worth individuals now prefer mobile apps over in-branch visits for routine portfolio management and transactions.', whyItMatters: 'Digital-first campaigns and app-focused CTAs may outperform traditional lead generation funnels.' },
-    { titleTemplate: () => 'Affluent Consumer Trust in Traditional Banks Rebounds to Pre-2020 Levels', tags: ['audience'], urgency: 'low', summary: 'Consumer confidence surveys show affluent individuals are returning trust to established financial institutions over fintech-only providers.', whyItMatters: 'Heritage and trust messaging will resonate more strongly — lean into JP Morgan\'s 200+ year legacy in creative.' },
-    { titleTemplate: () => 'Cross-Border Wealth Transfers Surge Among Millennial Inheritors', tags: ['audience'], urgency: 'medium', summary: 'The great wealth transfer is accelerating as millennial and Gen X heirs manage cross-border inheritance, creating demand for global advisory services.', whyItMatters: 'Target inheritor segments in APAC and Middle East with Private Banking consideration campaigns.' },
+    // ── 3. Competitive Movie Releases (exactly 3 — all Devil Wears Prada 2) ──
+    { titleTemplate: () => 'Devil Wears Prada 2 Trailer Drops to 32M Views — Meryl Streep Return Breaks Social Media', tags: ['competitor'], urgency: 'high', summary: 'The first trailer for Devil Wears Prada 2 has amassed 32M views in 72 hours, making it the most-watched comedy sequel trailer of the year. Meryl Streep and Anne Hathaway\'s return is dominating social conversation across all platforms.', whyItMatters: 'DWP2 is absorbing massive share of voice in the theatrical marketing space — Deep Water needs to surge social spend to maintain visibility during this attention spike.', competitor: 'Devil Wears Prada 2' },
+    { titleTemplate: () => 'r/movies megathread: "Devil Wears Prada 2 looks incredible — opening weekend is going to be huge"', tags: ['competitor'], urgency: 'high', summary: 'A Reddit megathread on r/movies discussing the DWP2 trailer has reached 22K upvotes with 4,100+ comments. Community sentiment is overwhelmingly positive, with users predicting a $60M+ opening weekend.', whyItMatters: 'Reddit hype for DWP2 is pulling attention from other releases — consider targeted Reddit ads positioning Deep Water as the alternative for audiences seeking intensity over comedy.', competitor: 'Devil Wears Prada 2' },
+    { titleTemplate: () => 'Devil Wears Prada 2 Fandango Pre-Sales Track for $58M Opening Weekend', tags: ['competitor'], urgency: 'high', summary: 'Fandango reports Devil Wears Prada 2 advance ticket sales are pacing toward a $58M domestic opening weekend, driven by 25-44 women who made up 72% of first-day pre-sale buyers across New York, Los Angeles, and Chicago.', whyItMatters: 'DWP2 is commanding massive pre-sale volume in top DMAs — increased theatrical competition will raise CPMs and fragment audience attention across all concurrent releases.', competitor: 'Devil Wears Prada 2' },
 
-    // ── Regulation & Policy ──
-    { titleTemplate: () => 'SEC Finalizes New Digital Advertising Disclosure Rules for Financial Services', tags: ['regulation'], urgency: 'high', summary: 'The SEC has published final rules requiring enhanced disclosures in digital financial product advertisements, including social media and programmatic ads.', whyItMatters: 'All US-facing ad creatives must be audited for compliance by Q3 — budget for legal review and creative refresh.' },
-    { titleTemplate: () => 'EU MiCA Regulation Creates New Crypto Marketing Restrictions', tags: ['regulation'], urgency: 'medium', summary: 'The Markets in Crypto-Assets regulation imposes strict marketing guidelines for crypto and digital asset products across EU member states.', whyItMatters: 'European digital asset campaigns need messaging overhaul to comply with new disclosure requirements.' },
-    { titleTemplate: () => 'FCA Tightens Social Media Financial Promotion Rules in the UK', tags: ['regulation'], urgency: 'high', summary: 'The UK Financial Conduct Authority has expanded its financial promotion rules to cover influencer partnerships and paid social media content.', whyItMatters: 'UK influencer and social campaigns require compliance review — may impact TikTok and Instagram strategies.' },
-    { titleTemplate: () => 'APAC Regulators Harmonize Cross-Border Data Sharing Framework', tags: ['regulation'], urgency: 'medium', summary: 'A new APAC regulatory framework allows easier cross-border data sharing for financial institutions, potentially enabling unified regional targeting.', whyItMatters: 'Unlocks new targeting capabilities for APAC campaigns — consolidate regional audience pools.' },
+    // ── 4. Genre & Theme Signals (exactly 3 pinned) ──
+    { titleTemplate: () => '#SharkTok Surges 340% on TikTok — Ocean Content Hits All-Time High', tags: ['genre'], urgency: 'high', summary: 'Ocean and shark-themed content is experiencing a massive surge on TikTok, with #SharkTok and related hashtags generating 340% more views than the monthly average. Creators are posting shark encounter stories, deep-sea footage, and ocean survival challenges.', whyItMatters: 'Trending genre interest creates organic tailwind — create shark/ocean themed Deep Water ads for TikTok to ride the wave.' },
+    { titleTemplate: () => 'Underwater Thriller Genre Sees 28% Box Office Growth Year-Over-Year', tags: ['genre'], urgency: 'medium', summary: 'Box office data shows underwater and ocean thriller films have outperformed the broader thriller category by 28% this year, with audiences showing strong appetite for high-tension maritime narratives.', whyItMatters: 'Genre tailwind supports bullish box office projections — lean into the underwater thriller positioning in all creative.' },
+    { titleTemplate: () => 'Ocean Survival Podcasts Climb Charts as Maritime Peril Trend Accelerates', tags: ['genre'], urgency: 'medium', summary: 'Multiple ocean survival and "lost at sea" podcasts have climbed the Apple and Spotify charts, indicating elevated public interest in maritime survival narratives ahead of summer movie season.', whyItMatters: 'Genre conversation is primed for Deep Water — sponsor relevant podcasts and test audio ad placements to capture high-intent listeners.' },
 
-    // ── Technological Disruption ──
-    { titleTemplate: () => 'AI-Powered Robo-Advisors Capture 12% of New Wealth Management Accounts', tags: ['tech-disruption'], urgency: 'high', summary: 'Automated advisory platforms are winning an increasing share of new wealth management accounts, particularly among younger affluent clients.', whyItMatters: 'Position JP Morgan\'s hybrid human+AI advisory model as differentiation in performance campaigns.' },
-    { titleTemplate: () => 'Blockchain-Based Identity Verification Reduces Onboarding Friction by 60%', tags: ['tech-disruption'], urgency: 'medium', summary: 'Major banks piloting blockchain KYC solutions report dramatically faster client onboarding, improving conversion from marketing to account opening.', whyItMatters: 'Faster onboarding means higher conversion rates — update attribution models to capture the improved funnel.' },
-    { titleTemplate: () => 'Voice Banking Adoption Doubles as Smart Speaker Penetration Grows', tags: ['tech-disruption'], urgency: 'low', summary: 'Consumer adoption of voice-activated banking through Alexa, Google Home, and Siri has doubled year-over-year across major markets.', whyItMatters: 'Emerging channel opportunity for brand awareness — consider voice-optimized search and audio ad formats.' },
-    { titleTemplate: () => 'Real-Time Payment Networks Reshape Consumer Expectations for Banking Speed', tags: ['tech-disruption'], urgency: 'medium', summary: 'The rapid adoption of instant payment networks (FedNow, PIX, UPI) is raising consumer expectations for banking speed across all services.', whyItMatters: 'Speed and innovation messaging should feature more prominently in product campaigns.' },
+    // ── 5. Review & Sentiment Signals ──
+    { titleTemplate: () => 'Deep Water Early Reviews: 82% Fresh on Rotten Tomatoes', tags: ['sentiment'], urgency: 'high', summary: 'Early critic reviews have pushed Deep Water to an 82% Fresh rating on Rotten Tomatoes, with praise for practical effects and lead performances.', whyItMatters: 'Strong RT score is a powerful trust signal — feature the rating prominently in all ad creative and landing pages.' },
+    { titleTemplate: () => 'Deep Water IMDb Rating Holds Steady at 7.4 After Early Screenings', tags: ['sentiment'], urgency: 'medium', summary: 'The IMDb audience rating for Deep Water is holding at 7.4 based on early screening attendees, indicating strong audience satisfaction.', whyItMatters: 'Audience score validates word-of-mouth potential — lean into "audiences love it" messaging in week 2 campaigns.' },
+    { titleTemplate: () => 'Social Sentiment for Deep Water Running 78% Positive Across Platforms', tags: ['sentiment'], urgency: 'medium', summary: 'Social listening tools show Deep Water sentiment is 78% positive, 15% neutral, and only 7% negative — well above thriller genre averages.', whyItMatters: 'Positive sentiment supports scaling spend — increase budget confidence and extend campaign flights if trends hold.' },
+    { titleTemplate: () => 'Deep Water Letterboxd Score Surpasses Genre Average by 0.8 Points', tags: ['sentiment'], urgency: 'low', summary: 'Film enthusiasts on Letterboxd are rating Deep Water 3.9/5, significantly above the thriller genre average of 3.1, with praise for cinematography.', whyItMatters: 'Letterboxd audience skews cinephile — use as proof point for Big Screen Chasers campaign targeting film enthusiasts.' },
+    { titleTemplate: () => '"Is Deep Water Worth Watching?" Search Volume Spikes 420%', tags: ['sentiment'], urgency: 'high', summary: 'Google search volume for "Deep Water worth watching" and "Deep Water good or bad" has surged 420%, indicating audiences are in the consideration phase.', whyItMatters: 'High-intent search signals demand — ensure branded search campaigns capture consideration-phase queries with review-led creative.' },
+    { titleTemplate: () => 'Deep Water Audience Exit Polls Show 91% Would Recommend to Friends', tags: ['sentiment'], urgency: 'medium', summary: 'Post-screening exit polls show 91% of audiences would recommend Deep Water, with "edge-of-your-seat tension" cited most frequently.', whyItMatters: 'Word-of-mouth metric is exceptional — shift post-opening budget toward social proof and testimonial-style creative.' },
 
-    // ── Macroeconomic Signals ──
-    { titleTemplate: () => 'Fed Signals Rate Hold Through Q3, Extending Favorable Wealth Management Conditions', tags: ['macroeconomic'], urgency: 'high', summary: 'Federal Reserve guidance indicates interest rates will remain stable through Q3 2026, supporting sustained wealth management and lending demand.', whyItMatters: 'Stable rate environment supports scaling Private Banking and Wealth Management campaigns in North America.' },
-    { titleTemplate: () => 'Global M&A Activity Surges 35% as Corporate Confidence Returns', tags: ['macroeconomic'], urgency: 'medium', summary: 'Mergers and acquisitions activity has rebounded sharply, with deal volumes up 35% year-over-year driven by technology and financial sectors.', whyItMatters: 'Increase Commercial Banking and advisory campaign budgets to capture deal-driven demand.' },
-    { titleTemplate: () => 'Emerging Market GDP Growth Outpaces Developed Economies by 2.1x', tags: ['macroeconomic'], urgency: 'medium', summary: 'IMF data shows emerging markets growing at 5.8% vs. 2.7% for developed economies, shifting wealth creation patterns eastward.', whyItMatters: 'Reallocate budget toward APAC and LATAM markets where wealth creation is accelerating fastest.' },
-    { titleTemplate: () => 'Dollar Strength Creates Headwinds for International Client Acquisition', tags: ['macroeconomic'], urgency: 'high', summary: 'The strong US dollar is increasing effective costs for international prospect targeting and reducing purchasing power parity in non-USD markets.', whyItMatters: 'Adjust APAC, LATAM, and Europe campaign budgets and CPM forecasts to account for currency impact.' },
+    // ── 6. Platform & Ad Tech ──
+    { titleTemplate: () => 'TikTok Launches Movie Ticket Integration for In-App Purchases', tags: ['platform'], urgency: 'high', summary: 'TikTok has rolled out native ticket purchasing for movie content, allowing users to buy tickets directly from video ads without leaving the app.', whyItMatters: 'Native ticketing removes friction from the conversion funnel — test in-app ticket purchase CTAs across all TikTok campaigns.' },
+    { titleTemplate: () => 'Meta Introduces New Advantage+ for Entertainment Vertical', tags: ['platform'], urgency: 'medium', summary: 'Meta has launched an entertainment-specific Advantage+ campaign type optimized for movie awareness and ticket conversions.', whyItMatters: 'Entertainment-specific optimization could improve efficiency — test against current campaign structures on Facebook and Instagram.' },
+    { titleTemplate: () => 'Google Search Adds Movie Showtime Cards to AI Overview Results', tags: ['platform'], urgency: 'high', summary: 'Google is now displaying interactive showtime cards within AI-generated search results for movie queries, changing how users discover films.', whyItMatters: 'New SERP format changes search behavior — ensure Deep Water structured data is optimized for showtime card eligibility.' },
+    { titleTemplate: () => 'The Trade Desk Launches CTV Movie Trailer Ad Format', tags: ['platform'], urgency: 'medium', summary: 'TTD has introduced a new pre-roll format specifically designed for movie trailers on connected TV, with enhanced engagement tracking.', whyItMatters: 'CTV trailer format is ideal for Deep Water — test across Thrill Seekers and Cast a Wide Net campaigns for upper-funnel reach.' },
+    { titleTemplate: () => 'Instagram Reels Tests "Swipe to Buy Tickets" Feature for Movies', tags: ['platform'], urgency: 'medium', summary: 'Instagram is testing a swipe-to-purchase feature for movie tickets in Reels, enabling seamless conversion from trailer content to ticket sale.', whyItMatters: 'Reduces conversion friction on Instagram — prioritize Reels creative in Seed Superfans and Opening Weekend campaigns.' },
+
+    // ── 7. Audience Behaviour ──
+    { titleTemplate: () => 'Gen Z Moviegoers Spend 3.2x More on Opening Weekends Than Millennials', tags: ['audience'], urgency: 'high', summary: 'New research shows Gen Z audiences are 3.2x more likely to attend opening weekend screenings, driven by FOMO and social media conversation.', whyItMatters: 'Opening Weekend Superfans campaign should over-index on Gen Z targeting — increase TikTok and Instagram allocation.' },
+    { titleTemplate: () => 'Thriller Audiences Show 45% Higher Engagement With Behind-the-Scenes Content', tags: ['audience'], urgency: 'medium', summary: 'A study of thriller movie marketing shows BTS content drives 45% higher engagement than standard trailer ads among core thriller audiences.', whyItMatters: 'Shift creative mix toward BTS content for Thrill Seekers and Adrenaline Athletes — test against standard trailer cuts.' },
+    { titleTemplate: () => 'Social Media Drives 62% of Movie Discovery for 18-34 Audiences', tags: ['audience'], urgency: 'medium', summary: 'New data confirms social media has overtaken traditional trailers as the primary movie discovery channel for 18-34 year olds.', whyItMatters: 'Social-first strategy is validated — ensure majority of Cast a Wide Net budget flows through social platforms.' },
+    { titleTemplate: () => 'Group Ticket Purchases Up 28% as Moviegoing Becomes Social Event Again', tags: ['audience'], urgency: 'low', summary: 'Theaters report a 28% increase in group ticket purchases, with friend groups and couples driving the return to theatrical experiences.', whyItMatters: 'Social moviegoing trend supports group-targeted messaging — test "bring your friends" CTAs in Adrenaline Athletes creative.' },
+
+    // ── 8. Box Office & Industry Macro ──
+    { titleTemplate: () => 'Domestic Box Office Tracking 22% Above 2025 Pace Through Q1', tags: ['macro'], urgency: 'medium', summary: 'The domestic box office is on a strong recovery trajectory, with Q1 2026 revenues tracking 22% above the same period in 2025.', whyItMatters: 'Rising box office tide lifts all boats — macro conditions favor aggressive spend for Deep Water opening weekend.' },
+    { titleTemplate: () => 'IMAX and Premium Format Screens Show Record Demand for Thrillers', tags: ['macro'], urgency: 'high', summary: 'IMAX and Dolby Cinema screenings of thriller films are seeing record attendance, with premium formats commanding 40% higher ticket prices.', whyItMatters: 'Premium format demand aligns with Deep Water\'s visual spectacle — emphasize IMAX experience in Big Screen Chasers creative.' },
+    { titleTemplate: () => 'Theatrical Window Shortening Pressures Opening Weekend Performance', tags: ['macro'], urgency: 'high', summary: 'Studios are shortening theatrical windows to 45 days, making opening weekend box office performance more critical than ever for total revenue.', whyItMatters: 'Compressed windows mean opening weekend is make-or-break — front-load maximum budget into the first 5 days.' },
+    { titleTemplate: () => 'Summer Movie Season Ad Costs Expected to Rise 18% Year-Over-Year', tags: ['macro'], urgency: 'medium', summary: 'Media buyers forecast an 18% increase in entertainment advertising costs as studios compete for attention heading into summer blockbuster season.', whyItMatters: 'Rising costs mean earlier is better — lock in media buys now before CPMs spike in late March.' },
   ];
 
+  // Pinned tags: brand, cast, competitor, genre get fixed articles with pinned dates
+  const pinnedTags = new Set(['brand', 'cast', 'competitor', 'genre']);
+  const pinnedTemplates = templates.filter(t => pinnedTags.has(t.tags[0]));
+  const loopTemplates = templates.filter(t => !pinnedTags.has(t.tags[0]));
+
+  // Brand (emerging conversation) — 3 articles with pinned recent dates
+  const brandTemplates = pinnedTemplates.filter(t => t.tags.includes('brand'));
+  brandTemplates.forEach((bt, idx) => {
+    items.push({
+      id: `news-brand-${idx}`,
+      title: bt.titleTemplate(),
+      source: ['Reddit — r/movies', 'Variety', 'Reddit — r/boxoffice'][idx],
+      date: format(subDays(END_DATE, idx), 'yyyy-MM-dd'),
+      tags: bt.tags,
+      regions: ['north-america'] as RegionId[],
+      urgency: bt.urgency,
+      summary: bt.summary,
+      whyItMatters: bt.whyItMatters,
+    });
+  });
+
+  // Cast — 3 articles with pinned recent dates
+  const castTemplates = pinnedTemplates.filter(t => t.tags.includes('cast'));
+  castTemplates.forEach((ct, idx) => {
+    items.push({
+      id: `news-cast-${idx}`,
+      title: ct.titleTemplate(),
+      source: ['Variety', 'Entertainment Weekly', 'Collider'][idx],
+      date: format(subDays(END_DATE, idx + 3), 'yyyy-MM-dd'),
+      tags: ct.tags,
+      regions: ['north-america'] as RegionId[],
+      urgency: ct.urgency,
+      summary: ct.summary,
+      whyItMatters: ct.whyItMatters,
+    });
+  });
+
+  // Competitor (Devil Wears Prada 2) — 3 articles with pinned recent dates
+  const competitorTemplates = pinnedTemplates.filter(t => t.tags.includes('competitor'));
+  competitorTemplates.forEach((ct, idx) => {
+    items.push({
+      id: `news-competitor-${idx}`,
+      title: ct.titleTemplate(),
+      source: ['Deadline', 'Reddit — r/movies', 'Variety'][idx],
+      date: format(subDays(END_DATE, idx + 1), 'yyyy-MM-dd'),
+      tags: ct.tags,
+      regions: ['north-america'] as RegionId[],
+      urgency: ct.urgency,
+      summary: ct.summary,
+      whyItMatters: ct.whyItMatters,
+      competitor: ct.competitor,
+    });
+  });
+
+  // Genre & Theme — 3 articles with pinned recent dates
+  const genreTemplates = pinnedTemplates.filter(t => t.tags.includes('genre'));
+  genreTemplates.forEach((gt, idx) => {
+    items.push({
+      id: `news-genre-${idx}`,
+      title: gt.titleTemplate(),
+      source: ['TikTok Trending', 'Box Office Mojo', 'Apple Podcasts'][idx],
+      date: format(subDays(END_DATE, idx + 2), 'yyyy-MM-dd'),
+      tags: gt.tags,
+      regions: ['north-america'] as RegionId[],
+      urgency: gt.urgency,
+      summary: gt.summary,
+      whyItMatters: gt.whyItMatters,
+    });
+  });
+
   for (let i = 0; i < 120; i++) {
-    const template = templates[i % templates.length];
+    const template = loopTemplates[i % loopTemplates.length];
     const daysAgo = randInt(0, 89);
     const date = format(subDays(END_DATE, daysAgo), 'yyyy-MM-dd');
     const competitor = template.competitor ? pick(COMPETITORS) : undefined;
@@ -490,13 +544,13 @@ function generateInsights(_anomalies: Anomaly[]): Insight[] {
       scope: 'campaign',
       category: 'performance',
       region: 'north-america',
-      campaign: 'na-sapphire-launch',
+      campaign: 'dw-seed-superfans',
       channels: ['instagram', 'facebook', 'tiktok'],
       title: 'Pacing to Underspend',
-      recommendedAction: 'Adjust pacing to reach the end date',
-      summary: 'Current daily spend rate projects a $3,750 underspend by flight end. Increasing daily budget or expanding targeting will close the gap.',
-      evidence: ['Projected spend: $46,250 of $50,000 budget', 'Daily run rate $325 below target', '18 days remaining in flight'],
-      impactEstimate: '+$3.8K utilization',
+      recommendedAction: 'Increase daily budget or expand targeting to hit flight budget',
+      summary: 'Seed Superfans daily spend rate projects a $38K underspend by flight end. Expanding lookalike audiences or increasing bid caps will close the gap before opening weekend.',
+      evidence: ['Projected spend: $6.38M of $6.42M budget', 'Daily run rate $2.1K below target', '18 days remaining in flight'],
+      impactEstimate: '+$38K utilization',
       confidence: 88,
       status: 'new',
       actionSteps: generateActionSteps('performance', 0),
@@ -506,13 +560,13 @@ function generateInsights(_anomalies: Anomaly[]): Insight[] {
       createdAt: yesterday,
       scope: 'campaign',
       category: 'performance',
-      region: 'europe',
-      campaign: 'eu-asset-mgmt',
-      channels: ['google-search', 'facebook'],
-      title: 'Conversion Rate Declining',
-      recommendedAction: 'Review landing page and audience targeting',
-      summary: 'Campaign conversion rate has dropped 22% over the last 14 days while traffic volume remains steady, suggesting landing page or audience quality issues.',
-      evidence: ['CVR dropped from 3.2% to 2.5% over 14 days', 'Click volume stable at ~1,200/day', 'Bounce rate increased 15% on landing page'],
+      region: 'north-america',
+      campaign: 'dw-amplify-fear',
+      channels: ['instagram', 'tiktok'],
+      title: 'Ticket Intent Declining',
+      recommendedAction: 'Refresh horror teasers and test new audience segments',
+      summary: 'Amplify Fear click-to-ticket-site rate has dropped 22% over 14 days while impressions remain steady, suggesting creative wear-out on horror audiences.',
+      evidence: ['CVR dropped from 3.2% to 2.5% over 14 days', 'Impression volume stable at ~180K/day', 'Bounce rate increased 15% on Fandango landing page'],
       impactEstimate: '-$12K rev risk',
       confidence: 82,
       status: 'new',
@@ -524,12 +578,12 @@ function generateInsights(_anomalies: Anomaly[]): Insight[] {
       scope: 'campaign',
       category: 'performance',
       region: 'north-america',
-      campaign: 'na-private-banking',
-      channels: ['google-search', 'facebook', 'instagram'],
+      campaign: 'dw-opening-weekend',
+      channels: ['google-search', 'instagram'],
       title: 'CPA Trending Above Target',
-      recommendedAction: 'Tighten targeting or reduce bid caps on low-ROAS segments',
-      summary: 'Cost per acquisition has risen 18% above the $45 target over the past week. Bidding inefficiency on broad audiences is the primary driver.',
-      evidence: ['Current CPA $53 vs $45 target', 'Broad audience CPA is 2.1x retargeting CPA', 'Bid cap exceeded on 3 ad sets'],
+      recommendedAction: 'Tighten targeting or reduce bid caps on broad search terms',
+      summary: 'Opening Weekend Superfans cost per ticket conversion has risen 18% above target. Generic movie search terms are driving inefficiency.',
+      evidence: ['Current CPA $53 vs $45 target', 'Generic terms CPA is 2.1x branded CPA', 'Bid cap exceeded on 3 ad groups'],
       impactEstimate: '-$8K efficiency',
       confidence: 79,
       status: 'new',
@@ -544,8 +598,8 @@ function generateInsights(_anomalies: Anomaly[]): Insight[] {
       category: 'performance',
       channels: ['instagram', 'google-search', 'facebook'],
       title: 'Channel Mix Imbalance',
-      recommendedAction: 'Shift budget from saturated to high-ROAS channels',
-      summary: 'Instagram is receiving 40% of total budget but generating only 18% of conversions. Google Search shows 3.2x higher ROAS with room to scale.',
+      recommendedAction: 'Shift budget from saturated social to high-intent search',
+      summary: 'Instagram is receiving 40% of total budget but generating only 18% of ticket conversions. Google Search shows 3.2x higher ROAS with room to scale pre-release.',
       evidence: ['Instagram ROAS: 1.2x vs Google Search ROAS: 3.8x', '40% budget → 18% conversions on Instagram', 'Google Search impression share only 62%'],
       impactEstimate: '+$28K rev potential',
       confidence: 91,
@@ -557,11 +611,11 @@ function generateInsights(_anomalies: Anomaly[]): Insight[] {
       createdAt: yesterday,
       scope: 'region',
       category: 'platform',
-      region: 'europe',
+      region: 'north-america',
       channels: ['facebook', 'google-search'],
       title: 'Diminishing Returns on Meta',
       recommendedAction: 'Reallocate excess Facebook spend to Google Search',
-      summary: 'Incremental CPA on Facebook has risen 35% as audience overlap between ad sets reaches 45%. Moving $5K weekly to Search would improve blended efficiency.',
+      summary: 'Incremental CPA on Facebook has risen 35% as audience overlap between ad sets reaches 45%. Moving $5K weekly to Search would improve blended efficiency heading into opening weekend.',
       evidence: ['Facebook incremental CPA up 35% MoM', 'Audience overlap at 45% across 4 ad sets', 'Google Search has 38% headroom on impression share'],
       impactEstimate: '-$4.2K CPA savings',
       confidence: 85,
@@ -575,8 +629,8 @@ function generateInsights(_anomalies: Anomaly[]): Insight[] {
       category: 'performance',
       channels: ['instagram', 'facebook', 'tiktok', 'ttd'],
       title: 'Cross-Channel Frequency Cap',
-      recommendedAction: 'Cap combined exposure to reduce wasted impressions',
-      summary: 'Users are seeing an average of 12.4 impressions per week across channels, well above the 8x optimal threshold. Excess frequency is driving CPM inflation without conversion lift.',
+      recommendedAction: 'Cap combined exposure to reduce trailer fatigue',
+      summary: 'Users are seeing Deep Water ads an average of 12.4 times per week across channels, well above the 8x optimal threshold. Excess frequency is driving CPM inflation without ticket conversion lift.',
       evidence: ['Average weekly frequency: 12.4x (target: 8x)', 'CTR drops 40% after 9th impression', 'Estimated waste: $6K/week in excess impressions'],
       impactEstimate: '-$6K waste/wk',
       confidence: 87,
@@ -591,11 +645,11 @@ function generateInsights(_anomalies: Anomaly[]): Insight[] {
       scope: 'campaign',
       category: 'creative',
       region: 'north-america',
-      campaign: 'na-sapphire-launch',
+      campaign: 'dw-amplify-fear',
       channels: ['instagram', 'facebook'],
       title: 'Possible Creative Fatigue',
       recommendedAction: 'Pause spend on underperforming ad',
-      summary: 'Primary hero creative has been running for 21 days with CTR declining steadily. Frequency has reached 6.8x in core audience, indicating ad fatigue.',
+      summary: 'Primary horror teaser creative has been running for 21 days with CTR declining steadily. Frequency has reached 6.8x in core horror audience, indicating ad fatigue.',
       evidence: ['CTR declined 28% over 14 days', 'Frequency reached 6.8x in primary audience', 'Creative fatigue index: 72/100'],
       impactEstimate: '+18% CTR recovery',
       confidence: 84,
@@ -607,12 +661,12 @@ function generateInsights(_anomalies: Anomaly[]): Insight[] {
       createdAt: yesterday,
       scope: 'campaign',
       category: 'creative',
-      region: 'europe',
-      campaign: 'eu-private-heritage',
+      region: 'north-america',
+      campaign: 'dw-seed-superfans',
       channels: ['instagram', 'tiktok'],
       title: 'Possible Creative Fatigue',
       recommendedAction: 'Pause spend on underperforming ad',
-      summary: 'Video ad variant B has reached saturation with completion rates dropping below 15%. Audience has been heavily exposed over the past 3 weeks.',
+      summary: 'Trailer clip variant B has reached saturation with completion rates dropping below 15%. Superfan audience has been heavily exposed over the past 3 weeks.',
       evidence: ['Video completion rate dropped from 28% to 14%', 'Frequency: 5.4x in lookalike audience', 'CPA increased 32% for this creative'],
       impactEstimate: '+22% VCR recovery',
       confidence: 78,
@@ -624,12 +678,12 @@ function generateInsights(_anomalies: Anomaly[]): Insight[] {
       createdAt: twoDaysAgo,
       scope: 'campaign',
       category: 'creative',
-      region: 'uk',
-      campaign: 'uk-wealth-mgmt',
-      channels: ['instagram', 'facebook'],
+      region: 'north-america',
+      campaign: 'dw-thrill-seekers',
+      channels: ['instagram', 'tiktok'],
       title: 'Possible Creative Fatigue',
       recommendedAction: 'Pause spend on underperforming ad',
-      summary: 'Carousel ad in UK Wealth Management campaign shows declining engagement. Swipe rate has halved while CPC has doubled, suggesting creative exhaustion.',
+      summary: 'Action-focused carousel in Thrill Seekers campaign shows declining engagement. Swipe rate has halved while CPC has doubled, suggesting creative exhaustion.',
       evidence: ['Swipe rate dropped 52% in 10 days', 'CPC increased from $1.20 to $2.45', 'Engagement rate: 1.1% (was 2.8%)'],
       impactEstimate: '+$2.1K efficiency',
       confidence: 81,
@@ -642,11 +696,11 @@ function generateInsights(_anomalies: Anomaly[]): Insight[] {
       scope: 'campaign',
       category: 'creative',
       region: 'north-america',
-      campaign: 'na-sapphire-launch',
+      campaign: 'dw-seed-superfans',
       channels: ['tiktok', 'instagram'],
       title: 'Top Performer Ready to Scale',
       recommendedAction: 'Increase budget allocation to top creative',
-      summary: 'New UGC-style Sapphire Reserve video is outperforming all other creatives by 2.4x on ROAS. Currently capped at 15% of ad set budget — scaling to 35% is projected to improve overall campaign ROAS.',
+      summary: 'New UGC-style Deep Water reaction video is outperforming all other creatives by 2.4x on ROAS. Currently capped at 15% of ad set budget — scaling to 35% is projected to improve overall campaign ROAS.',
       evidence: ['Creative ROAS: 4.8x vs campaign avg 2.0x', 'Only receiving 15% of ad set budget', 'No fatigue signals after 12 days'],
       impactEstimate: '+$18K rev potential',
       confidence: 92,
@@ -658,12 +712,12 @@ function generateInsights(_anomalies: Anomaly[]): Insight[] {
       createdAt: yesterday,
       scope: 'campaign',
       category: 'creative',
-      region: 'apac',
-      campaign: 'apac-sapphire-launch',
+      region: 'north-america',
+      campaign: 'dw-cast-wide-net',
       channels: ['facebook', 'instagram'],
       title: 'Low Engagement Variant',
       recommendedAction: 'Replace or refresh underperforming creative',
-      summary: 'Static image variant C has the lowest engagement rate across all active creatives at 0.8%. Budget is being wasted on an asset that fails to capture attention.',
+      summary: 'Static poster image variant C has the lowest engagement rate across all active creatives at 0.8%. Budget is being wasted on an asset that fails to capture attention.',
       evidence: ['Engagement rate: 0.8% (campaign avg: 2.3%)', 'CTR: 0.4% vs 1.2% campaign average', 'Zero conversions attributed in last 7 days'],
       impactEstimate: '+$3.5K reallocation',
       confidence: 90,
@@ -698,7 +752,7 @@ export function generateAllData(): MockDataStore {
     channels: def.channels,
     countries: def.countries,
     startDate: format(START_DATE, 'yyyy-MM-dd'),
-    plannedBudget: Math.round(def.budgetMultiplier * REGION_MULTIPLIERS[def.region] * 150000),
+    plannedBudget: def.plannedBudget,
   }));
 
   const dailyData = generateDailyData();

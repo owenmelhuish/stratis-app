@@ -89,14 +89,7 @@ export function RegionView() {
         )}
       </div>
 
-      {selectedRegion && (
-        <WorldMapChart
-          regionData={data.regionData}
-          viewLevel="region"
-          selectedRegion={selectedRegion}
-          countryData={data.countryData.filter(c => c.regionId === selectedRegion)}
-        />
-      )}
+      <WorldMapChart stateData={data.stateData} />
 
       <div className="grid grid-cols-1 xl:grid-cols-5 gap-6">
         <div className="xl:col-span-3">

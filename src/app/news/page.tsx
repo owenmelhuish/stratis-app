@@ -18,248 +18,89 @@ interface FeedSection {
 const FEED_SECTIONS: FeedSection[] = [
   {
     id: "brand",
-    title: "Brand News",
-    sources: ["JP Morgan Newsroom", "Financial Times", "Bloomberg", "Reuters"],
+    title: "Emerging Conversation",
+    sources: ["Reddit", "Twitter / X", "TikTok Comments", "Letterboxd"],
     filterFn: (item) => item.tags.includes("brand"),
   },
   {
+    id: "cast",
+    title: "Cast & Talent Signals",
+    sources: ["Variety", "People", "Entertainment Weekly", "Collider"],
+    filterFn: (item) => item.tags.includes("cast"),
+  },
+  {
     id: "competitor",
-    title: "Competitor Watch",
-    sources: ["Goldman Sachs", "Morgan Stanley", "Bank of America", "Citigroup"],
+    title: "Competitor Watch — Devil Wears Prada 2",
+    sources: ["Deadline", "Reddit", "Variety", "Box Office Mojo"],
     filterFn: (item) => item.tags.includes("competitor"),
   },
   {
-    id: "trend",
-    title: "Trend Radar",
-    sources: ["Google Trends", "Social Listening", "Industry Reports"],
+    id: "genre",
+    title: "Genre & Theme Signals",
+    sources: ["Google Trends", "Social Listening", "Reddit", "TikTok Trending"],
+    filterFn: (item) => item.tags.includes("genre"),
+  },
+  {
+    id: "platform",
+    title: "Platform & Ad Tech Updates",
+    sources: ["TechCrunch", "AdExchanger", "Digiday", "Marketing Dive"],
     filterFn: (item) => item.tags.includes("platform"),
-  },
-  {
-    id: "market",
-    title: "Market Sentiment",
-    sources: ["Reuters", "Bloomberg", "CNBC"],
-    filterFn: (item) => item.tags.includes("macro"),
-  },
-  {
-    id: "audience",
-    title: "Audience Behaviour",
-    sources: ["McKinsey", "Deloitte Insights", "Accenture"],
-    filterFn: (item) => item.tags.includes("audience"),
-  },
-  {
-    id: "regulation",
-    title: "Regulation & Policy",
-    sources: ["SEC", "FCA", "European Commission"],
-    filterFn: (item) => item.tags.includes("regulation"),
-  },
-  {
-    id: "tech",
-    title: "Technological Disruption",
-    sources: ["TechCrunch", "Wired", "MIT Technology Review"],
-    filterFn: (item) => item.tags.includes("tech-disruption"),
-  },
-  {
-    id: "macro",
-    title: "Macroeconomic Signals",
-    sources: ["Federal Reserve", "IMF", "World Bank"],
-    filterFn: (item) => item.tags.includes("macroeconomic"),
   },
 ];
 
 // ─── Contextual image URL from article title ────────────────────────────────
 
 const CURATED_IMAGES: Array<{ match: RegExp; photos: string[] }> = [
-  // ── Brand News (JP Morgan-specific articles) ──
-  { match: /Record Q1 Revenue|Reports Record/i, photos: ["photo-1526628953301-3e589a6a8b74"] },
-  { match: /Sapphire Reserve Card|Next.Gen Sapphire/i, photos: ["photo-1556740738-b6a63e27c4df"] },
-  { match: /Surpasses \$4 Trillion|\$4 Trillion.*Client/i, photos: ["photo-1553729459-efe14ef6055d"] },
-  { match: /Best Digital Bank|World.*Best.*Digital/i, photos: ["photo-1660732106134-f3009a1e90ea"] },
-  { match: /Jamie Dimon|CEO.*Annual.*Letter|Shareholder Letter/i, photos: ["photo-1553484771-4e29a68540f4"] },
-  { match: /Southeast Asia|Singapore.*Bangkok.*Jakarta/i, photos: ["photo-1525625293386-3f8f99389edd"] },
-  { match: /Mobile Banking.*Users|23%.*Increase.*Mobile/i, photos: ["photo-1730818027542-b4e1896f653b"] },
-  { match: /Foundation.*\$500M|Affordable Housing Initiative/i, photos: ["photo-1746171002636-c4e3f621acb4"] },
-  { match: /Innovation Hub.*Dallas|Commercial Banking.*Dallas/i, photos: ["photo-1563219125-60d10ffe8877"] },
-  { match: /Formula E|Electric.*Motorsport|Banking Partner/i, photos: ["photo-1648077894231-d222a5e69304"] },
-  // ── Competitor banks ──
-  { match: /Goldman/i, photos: [
-    "photo-1552958700-7004a2c5cb60",
-    "photo-1704303677039-5fcae8cf3601",
-    "photo-1486406146926-c627a92ad1ab",
-  ]},
-  { match: /Morgan Stanley/i, photos: [
-    "photo-1496442226666-8d4d0e62e6e9",
-    "photo-1538970272646-f61fabb3a8a2",
-    "photo-1704303677039-5fcae8cf3601",
-  ]},
-  { match: /Bank of America/i, photos: [
-    "photo-1632198740387-394dd254b658",
-    "photo-1664990600404-b89f1801f29d",
-    "photo-1668483689415-5a1131fc0735",
-  ]},
-  { match: /Citigroup/i, photos: [
-    "photo-1684128168757-52608e165011",
-    "photo-1486406146926-c627a92ad1ab",
-    "photo-1704303677039-5fcae8cf3601",
-  ]},
-  { match: /Wells Fargo/i, photos: [
-    "photo-1680672306353-4b3ae6523e56",
-    "photo-1616482789264-4d40fc690a61",
-    "photo-1588592378201-4a1aee5ab493",
-  ]},
-  { match: /JP Morgan|JPMorgan/i, photos: [
-    "photo-1486406146926-c627a92ad1ab",
-    "photo-1554469384-e58fac16e23a",
-    "photo-1560520653-9e0e4c89eb11",
-  ]},
-  { match: /Digital Banking|fintech|adoption/i, photos: [
-    "photo-1607697987724-fc9f8b225223",
-    "photo-1556742049-0cfed4f6a45d",
-    "photo-1551288049-bebda4e38f71",
-  ]},
-  { match: /banking|wealth/i, photos: [
-    "photo-1551836022-deb4988cc6c0",
-    "photo-1573745851773-b0998acd8adb",
-    "photo-1460925895917-afdab827c52f",
-  ]},
-  { match: /TikTok|Reels|video/i, photos: [
-    "photo-1611162616305-c69b3fa7fbe0",
-    "photo-1611162618071-b39a2ec055fb",
-    "photo-1600096194534-95cf5ece04cf",
-  ]},
-  { match: /Meta|Facebook|Instagram/i, photos: [
-    "photo-1611162617474-5b21e879e113",
-    "photo-1671459922221-be8beec5c9fa",
-    "photo-1432888622747-4eb9a8efeb07",
-  ]},
-  { match: /Google/i, photos: [
-    "photo-1573804633927-bfcbcd909acd",
-    "photo-1616499370260-485b3e5ed653",
-    "photo-1551808525-51a94da548ce",
-  ]},
-  { match: /Trade Desk|CTV|programmatic/i, photos: [
-    "photo-1593784991095-a205069470b6",
-    "photo-1611532736597-de2d4265fba3",
-    "photo-1522869635100-9f4c5e86aa37",
-  ]},
-  { match: /privacy|regulation/i, photos: [
-    "photo-1563013544-824ae1b704d3",
-    "photo-1614064641938-3bbee52942c7",
-    "photo-1558494949-ef010cbdcc31",
-  ]},
-  { match: /luxury|premium/i, photos: [
-    "photo-1486406146926-c627a92ad1ab",
-    "photo-1560520653-9e0e4c89eb11",
-    "photo-1554469384-e58fac16e23a",
-  ]},
-  { match: /Middle East/i, photos: [
-    "photo-1512453979798-5ea266f8880c",
-    "photo-1518684079-3c830dcef090",
-    "photo-1526495124232-a04e1849168c",
-  ]},
-  { match: /APAC|Asia/i, photos: [
-    "photo-1540959733332-eab4deabeeaf",
-    "photo-1536098561742-ca998e48cbcc",
-    "photo-1493976040374-85c8e12f0c0e",
-  ]},
-  { match: /UK|Europe|EU/i, photos: [
-    "photo-1513635269975-59663e0ac1ad",
-    "photo-1486299267070-83823f5448dd",
-    "photo-1505761671935-60b3a7427bad",
-  ]},
-  { match: /LATAM|Latin/i, photos: [
-    "photo-1516306580123-e6e52b1b7b5f",
-    "photo-1543059080-f9b1272213d5",
-    "photo-1551288049-bebda4e38f71",
-  ]},
-  { match: /currency|market|forecast/i, photos: [
-    "photo-1611974789855-9c2a0a7236a3",
-    "photo-1590283603385-17ffb3a7f29f",
-    "photo-1634542984003-e0fb8e200e91",
-  ]},
-  { match: /open.banking|digital.banking/i, photos: [
-    "photo-1607697987724-fc9f8b225223",
-    "photo-1551836022-deb4988cc6c0",
-    "photo-1460925895917-afdab827c52f",
-  ]},
-  // ── Audience Behaviour (per-article) ──
-  { match: /Gen Z.*Brokerage/i, photos: [
-    "photo-1758598303866-743838235b41",
-    "photo-1645226880663-81561dcab0ae",
-  ]},
-  { match: /HNW.*Mobile|Mobile.*First.*Financial/i, photos: [
-    "photo-1681826291722-70bd7e9e6fc3",
-    "photo-1726137065539-1aa2cb315e80",
-  ]},
-  { match: /Affluent.*Trust.*Traditional|Trust.*Bank.*Rebound/i, photos: [
-    "photo-1462216150495-f0bac6474243",
-    "photo-1551735084-34054d4a1372",
-  ]},
-  { match: /Cross.Border.*Wealth|Wealth.*Transfer.*Millennial/i, photos: [
-    "photo-1429903084855-dade91f38f39",
-    "photo-1457583221838-6bf5ad5ea874",
-  ]},
-  // ── Regulation & Policy (per-article) ──
-  { match: /SEC.*Finalizes|SEC.*Digital.*Advertising/i, photos: [
-    "photo-1518701094052-4dcc60086bec",
-    "photo-1633059050703-0f1b50828402",
-  ]},
-  { match: /MiCA.*Regulation|Crypto.*Marketing.*Restriction/i, photos: [
-    "photo-1594811815859-c354d5afc3dc",
-    "photo-1698191310487-9fc33b0e266a",
-  ]},
-  { match: /FCA.*Tightens|FCA.*Social.*Media/i, photos: [
-    "photo-1642764984366-08735318f351",
-    "photo-1513635269975-59663e0ac1ad",
-  ]},
-  { match: /APAC.*Regulat|Harmonize.*Cross.Border.*Data/i, photos: [
-    "photo-1549448270-ef54eadd61fc",
-    "photo-1566475922470-2740a2d7e17b",
-  ]},
-  // ── Technological Disruption (per-article) ──
-  { match: /Robo.Advisor|AI.Powered.*Wealth/i, photos: [
-    "photo-1684369175809-f9642140a1bd",
-    "photo-1493599124325-e628361046af",
-  ]},
-  { match: /Blockchain.*Identity|Blockchain.*Verification/i, photos: [
-    "photo-1664526937033-fe2c11f1be25",
-    "photo-1518546305927-5a555bb7020d",
-  ]},
-  { match: /Voice.*Banking|Smart.*Speaker.*Penetration/i, photos: [
-    "photo-1558089687-f282ffcbc126",
-    "photo-1603684560609-57feb6c6e3df",
-  ]},
-  { match: /Real.Time.*Payment|Payment.*Network.*Reshape/i, photos: [
-    "photo-1456983933114-c22026990f4b",
-    "photo-1726137065539-1aa2cb315e80",
-  ]},
-  // ── Macroeconomic Signals (per-article) ──
-  { match: /Fed.*Signal|Fed.*Rate.*Hold/i, photos: [
-    "photo-1633059050703-0f1b50828402",
-    "photo-1526304640581-d334cdbbf45e",
-  ]},
-  { match: /M&A.*Activity|M&A.*Surge|Merger.*Acquisition/i, photos: [
-    "photo-1595874199826-7f0e8edece14",
-    "photo-1462216150495-f0bac6474243",
-  ]},
-  { match: /Emerging.*Market.*GDP|GDP.*Growth.*Outpace/i, photos: [
-    "photo-1678799200184-a813e6039df1",
-    "photo-1609860850812-86de933acace",
-  ]},
-  { match: /Dollar.*Strength|Dollar.*Headwind/i, photos: [
-    "photo-1526304640581-d334cdbbf45e",
-    "photo-1631514623720-7f0996f87b75",
-  ]},
-  { match: /campaign|budget|spend/i, photos: [
-    "photo-1460925895917-afdab827c52f",
-    "photo-1551288049-bebda4e38f71",
-    "photo-1504868584819-f8e8b4b6d7e3",
-  ]},
+  // ── Cast & Talent (TMDB actor photos — must be first to match before "Deep Water" catch-all) ──
+  { match: /Aaron Eckhart|Eckhart/i, photos: ["https://image.tmdb.org/t/p/w500/u5JjnRMr9zKEVvOP7k3F6gdcwT6.jpg"] },
+  { match: /Kelly Gale|Gale/i, photos: ["https://image.tmdb.org/t/p/w500/bU9w5FITuN7TUa9VxFH3whhXFkP.jpg"] },
+  { match: /Ben Kingsley|Kingsley/i, photos: ["https://image.tmdb.org/t/p/w500/vQtBqpF2HDdzbfXHDzR4u37i1Ac.jpg"] },
+  // ── Emerging Conversation (each article gets a unique image) ──
+  { match: /r\/movies.*practical|Jaws vibes/i, photos: ["photo-1478720568477-152d9b164e26"] },
+  { match: /Subway Takeover|OOH|station takeover/i, photos: ["photo-1534430480872-3498386e7856"] },
+  { match: /r\/boxoffice.*pre-sale/i, photos: ["photo-1489599849927-2ee91cede3ba"] },
+  // ── Competing Movies (Devil Wears Prada 2 — must be before generic trailer/ticket matchers) ──
+  { match: /Prada 2 Trailer|Meryl Streep Return/i, photos: ["photo-1469334031218-e382a71b716b"] },
+  { match: /r\/movies.*Prada|megathread.*Prada/i, photos: ["photo-1509631179647-0177331693ae"] },
+  { match: /Prada 2 Fandango|Pre-Sales Track/i, photos: ["photo-1445205170230-053b83016050"] },
+  // ── Film & Brand (general Deep Water fallback) ──
+  { match: /trailer|teaser|first look/i, photos: ["photo-1536440136628-849c177e76a1", "photo-1485846234645-a62644f84728"] },
+  { match: /premiere|red carpet|opening night/i, photos: ["photo-1598899134739-24c46f58b8c0", "photo-1594909122845-11baa439b7bf"] },
+  { match: /ticket|pre.?sale|Fandango/i, photos: ["photo-1517604931442-7e0c8ed2963c", "photo-1489599849927-2ee91cede3ba"] },
+  { match: /Deep Water|deep water/i, photos: ["photo-1551244072-5d12893278ab", "photo-1507525428034-b723cf961d3e", "photo-1544551763-46a013bb70d5"] },
+  { match: /Tonight Show|talk show|interview/i, photos: ["photo-1594909122845-11baa439b7bf", "photo-1478720568477-152d9b164e26"] },
+  { match: /press tour|media tour|junket/i, photos: ["photo-1598899134739-24c46f58b8c0", "photo-1524712245354-2c4e5e7121c0"] },
+  // ── Genre & Theme (each article unique — must be before generic ocean/shark matchers) ──
+  { match: /SharkTok|shark.*TikTok|340%/i, photos: ["photo-1560275619-4662e36fa65c"] },
+  { match: /Underwater Thriller Genre.*28%/i, photos: ["photo-1551244072-5d12893278ab"] },
+  { match: /Ocean Survival Podcasts|Maritime Peril Trend/i, photos: ["photo-1478737270239-2f02b77fc618"] },
+  { match: /shark|ocean|underwater|sea/i, photos: ["photo-1544551763-46a013bb70d5", "photo-1507525428034-b723cf961d3e"] },
+  { match: /thriller|suspense|survival/i, photos: ["photo-1536440136628-849c177e76a1", "photo-1478720568477-152d9b164e26"] },
+  // ── Reviews & Sentiment ──
+  { match: /Rotten Tomatoes|critics|review/i, photos: ["photo-1489599849927-2ee91cede3ba", "photo-1517604931442-7e0c8ed2963c"] },
+  { match: /IMDb|rating|score/i, photos: ["photo-1517604931442-7e0c8ed2963c", "photo-1485846234645-a62644f84728"] },
+  { match: /Letterboxd|social sentiment|buzz/i, photos: ["photo-1478720568477-152d9b164e26", "photo-1594909122845-11baa439b7bf"] },
+  { match: /search volume|Google Trends|trending/i, photos: ["photo-1460925895917-afdab827c52f", "photo-1551288049-bebda4e38f71"] },
+  // ── Platform & Ad Tech ──
+  { match: /TikTok|Reels|short.?form/i, photos: ["photo-1611162616305-c69b3fa7fbe0", "photo-1611162618071-b39a2ec055fb"] },
+  { match: /Meta|Facebook|Instagram/i, photos: ["photo-1611162617474-5b21e879e113", "photo-1432888622747-4eb9a8efeb07"] },
+  { match: /Google|showtime|search ads/i, photos: ["photo-1573804633927-bfcbcd909acd", "photo-1616499370260-485b3e5ed653"] },
+  { match: /Trade Desk|CTV|programmatic/i, photos: ["photo-1593784991095-a205069470b6", "photo-1611532736597-de2d4265fba3"] },
+  // ── Audience Behaviour ──
+  { match: /Gen Z|young audience|18.?24/i, photos: ["photo-1524712245354-2c4e5e7121c0", "photo-1611162616305-c69b3fa7fbe0"] },
+  { match: /group ticket|social movie|friend/i, photos: ["photo-1489599849927-2ee91cede3ba", "photo-1517604931442-7e0c8ed2963c"] },
+  // ── Box Office & Industry ──
+  { match: /box office|domestic gross|weekend/i, photos: ["photo-1517604931442-7e0c8ed2963c", "photo-1489599849927-2ee91cede3ba"] },
+  { match: /IMAX|premium format|Dolby/i, photos: ["photo-1536440136628-849c177e76a1", "photo-1489599849927-2ee91cede3ba"] },
+  { match: /theatrical window|streaming|VOD/i, photos: ["photo-1593784991095-a205069470b6", "photo-1611532736597-de2d4265fba3"] },
+  { match: /summer|blockbuster|ad cost/i, photos: ["photo-1507525428034-b723cf961d3e", "photo-1544551763-46a013bb70d5"] },
+  { match: /campaign|budget|spend/i, photos: ["photo-1460925895917-afdab827c52f", "photo-1551288049-bebda4e38f71"] },
 ];
 
 const FALLBACK_PHOTOS = [
-  "photo-1486406146926-c627a92ad1ab",
-  "photo-1554469384-e58fac16e23a",
-  "photo-1460925895917-afdab827c52f",
+  "photo-1536440136628-849c177e76a1",
+  "photo-1489599849927-2ee91cede3ba",
+  "photo-1517604931442-7e0c8ed2963c",
 ];
 
 function hashId(id: string): number {
@@ -268,16 +109,21 @@ function hashId(id: string): number {
   return Math.abs(h);
 }
 
+function photoToUrl(photo: string, w: number, h: number): string {
+  if (photo.startsWith("http")) return photo;
+  return `https://images.unsplash.com/${photo}?w=${w}&h=${h}&fit=crop&auto=format`;
+}
+
 function articleImageUrl(title: string, id: string): string {
   const idx = hashId(id);
   for (const entry of CURATED_IMAGES) {
     if (entry.match.test(title)) {
       const photo = entry.photos[idx % entry.photos.length];
-      return `https://images.unsplash.com/${photo}?w=640&h=400&fit=crop&auto=format`;
+      return photoToUrl(photo, 640, 400);
     }
   }
   const photo = FALLBACK_PHOTOS[idx % FALLBACK_PHOTOS.length];
-  return `https://images.unsplash.com/${photo}?w=640&h=400&fit=crop&auto=format`;
+  return photoToUrl(photo, 640, 400);
 }
 
 // Larger version for the modal hero
@@ -286,118 +132,116 @@ function articleImageUrlLarge(title: string, id: string): string {
   for (const entry of CURATED_IMAGES) {
     if (entry.match.test(title)) {
       const photo = entry.photos[idx % entry.photos.length];
-      return `https://images.unsplash.com/${photo}?w=1200&h=500&fit=crop&auto=format`;
+      return photoToUrl(photo, 1200, 500);
     }
   }
   const photo = FALLBACK_PHOTOS[idx % FALLBACK_PHOTOS.length];
-  return `https://images.unsplash.com/${photo}?w=1200&h=500&fit=crop&auto=format`;
+  return photoToUrl(photo, 1200, 500);
 }
 
 // ─── AI Insight generator (deterministic from article) ──────────────────────
 
 const TAG_LABELS: Record<NewsTag, string> = {
-  brand: "Brand News",
-  competitor: "Competitive Intelligence",
-  category: "Market Category",
+  brand: "Film & Brand",
+  cast: "Cast & Talent",
+  competitor: "Competing Release",
+  genre: "Genre & Themes",
+  sentiment: "Reviews & Sentiment",
   platform: "Platform Update",
-  macro: "Macro Trend",
   audience: "Audience Behaviour",
-  regulation: "Regulation & Policy",
-  "tech-disruption": "Tech Disruption",
-  macroeconomic: "Macroeconomic Signal",
+  macro: "Box Office & Industry",
 };
 
 function generateInsight(item: NewsItem): { impact: string; actions: Array<{ icon: React.ElementType; title: string; description: string }> } {
   const tag = item.tags[0];
-  const h = hashId(item.id);
 
   if (tag === "brand") {
     return {
-      impact: "This JP Morgan news has direct implications for how the brand is perceived in the market. Public communications, product launches, and corporate announcements shape consumer sentiment and should be reflected in campaign messaging. Aligning paid media with earned media momentum maximizes the halo effect from positive press coverage.",
+      impact: "Organic social conversation about Deep Water is building momentum across Reddit and TikTok. Grassroots buzz from real users is the most credible form of social proof and drives outsized word-of-mouth. Amplifying this emerging conversation through paid channels compounds the organic momentum at a fraction of the cost of generating awareness from scratch.",
       actions: [
-        { icon: TrendingUp, title: "Amplify With Paid Media", description: "Boost awareness campaigns in regions where this news is most relevant. Align ad creative with the narrative to create a cohesive brand experience across earned and paid touchpoints." },
-        { icon: Target, title: "Update Campaign Messaging", description: "Refresh ad copy and landing pages to reflect this development. Incorporate key proof points from the announcement into Sapphire Reserve and Private Banking creative." },
-        { icon: Shield, title: "Monitor Sentiment & SOV", description: "Track brand sentiment and share of voice in the 48 hours following this news. Flag any negative commentary for rapid response and adjust messaging if sentiment shifts." },
+        { icon: TrendingUp, title: "Boost UGC-Style Creative", description: "Create paid social ads that mirror the look and tone of organic user posts — reaction-style videos, comment screenshots, and community quotes drive 2-3x higher engagement than polished studio assets." },
+        { icon: Target, title: "Target Community Lookalikes", description: "Build custom audiences from users engaging with Deep Water Reddit threads and TikTok comments. Layer with movie-intent signals for high-conversion prospecting at scale." },
+        { icon: Shield, title: "Monitor Conversation Velocity", description: "Track mention volume and sentiment across Reddit, TikTok, and Twitter/X in real time. If the conversation accelerates, immediately increase spend to ride the organic wave before it peaks." },
+      ],
+    };
+  }
+  if (tag === "cast") {
+    return {
+      impact: "Cast visibility drives outsized awareness for theatrical releases. Talk show appearances, social media posts, and press tour coverage create high-engagement moments that should be captured and amplified in paid campaigns. Talent-led creative typically outperforms standard studio assets by 30-50% on social platforms.",
+      actions: [
+        { icon: TrendingUp, title: "Create Talent-Led Creative", description: "Cut 15- and 30-second social clips from this appearance for Instagram Reels and TikTok. Talent-driven content drives 2-3x higher engagement than standard trailer cuts." },
+        { icon: Target, title: "Activate Fan Targeting", description: "Build custom audiences around the talent's existing fanbase — followers, lookalikes, and interest segments. Layer with movie-intent signals for high-conversion prospecting." },
+        { icon: Shield, title: "Track Engagement Velocity", description: "Monitor engagement rate and share velocity on talent-related content. If a clip goes viral, immediately increase spend allocation to ride the organic momentum." },
       ],
     };
   }
   if (tag === "competitor") {
     return {
-      impact: `This signals a direct competitive move that could affect JP Morgan's positioning in key markets. ${item.competitor ? `${item.competitor}'s` : "Competitor"} actions suggest an aggressive push for market share, particularly among high-net-worth individuals. If left unaddressed, this could erode JP Morgan's share of voice and brand consideration among affluent financial decision-makers.`,
+      impact: "Devil Wears Prada 2 is commanding massive attention across social media, Reddit, and ticket pre-sales. The sequel's built-in fanbase and nostalgia factor give it outsized share of voice that could overshadow Deep Water during the critical release window. However, the audience overlap is limited — DWP2 skews female 25-44 comedy while Deep Water targets thriller/action audiences — creating opportunities for strategic counter-programming.",
       actions: [
-        { icon: Shield, title: "Deploy Defensive Campaigns", description: `Launch brand defense campaigns in affected markets targeting ${item.competitor || "competitor"} prospects with JP Morgan's heritage and trust messaging. Estimated budget: $45-65K over 2 weeks.` },
-        { icon: Target, title: "Increase Conquest Targeting", description: `Activate conquest audiences on Google and Meta targeting users researching ${item.competitor || "competitor"} services. Focus on Sapphire Reserve vs. competitor comparison content.` },
-        { icon: TrendingUp, title: "Boost Brand Search Bids", description: "Increase branded search bid caps by 20% in affected regions to protect brand SERP presence and prevent competitor conquesting." },
+        { icon: Shield, title: "Boost Brand Search Defense", description: "Increase Deep Water branded search bid caps by 25%. Add 'Devil Wears Prada 2' as a negative keyword on broad campaigns to prevent budget leakage to non-target audiences." },
+        { icon: Target, title: "Lean Into Counter-Programming", description: "Position Deep Water as the alternative for audiences not interested in DWP2. Target male 18-34 and thriller enthusiasts with messaging that emphasises adrenaline, practical stunts, and edge-of-your-seat tension." },
+        { icon: TrendingUp, title: "Surge Spend in Overlapping DMAs", description: "Increase budget by 20% in NY, LA, and Chicago where DWP2 pre-sales are strongest. Focus on CTV and YouTube pre-roll to maintain visibility alongside the DWP2 marketing blitz." },
+      ],
+    };
+  }
+  if (tag === "genre") {
+    return {
+      impact: "Rising cultural interest in ocean, shark, and survival content signals a favourable environment for Deep Water's genre positioning. Trending topics create organic search and social demand that paid campaigns can intercept and amplify at lower CPAs.",
+      actions: [
+        { icon: TrendingUp, title: "Intercept Trending Interest", description: "Launch Google Search campaigns targeting trending genre keywords — shark movies, ocean thriller, survival films. Capture high-intent searchers while CPCs remain efficient." },
+        { icon: Target, title: "Align Creative With Trends", description: "Produce TikTok and Reels content that ties Deep Water's narrative to trending cultural moments. Use trending audio and hashtags to maximise organic amplification." },
+        { icon: Shield, title: "Monitor Trend Lifecycle", description: "Track Google Trends and TikTok trending data daily. If genre interest peaks, immediately scale spend; if it fades, reallocate to brand and ticket-drive campaigns." },
+      ],
+    };
+  }
+  if (tag === "sentiment") {
+    return {
+      impact: "Critic scores and audience sentiment are the strongest predictors of theatrical hold and word-of-mouth multiplier. Positive reviews should be weaponised in paid creative immediately, while any negative signals require rapid messaging adjustments to protect opening weekend projections.",
+      actions: [
+        { icon: TrendingUp, title: "Feature Review Scores in Creative", description: "Update all display, social, and video ads to include the latest Rotten Tomatoes and IMDb scores. Critic-endorsed creative drives 20-35% higher click-through rates." },
+        { icon: Target, title: "Target Review-Reading Audiences", description: "Activate audiences who visit Rotten Tomatoes, IMDb, and Letterboxd. These high-intent moviegoers are closest to ticket purchase and respond to social proof." },
+        { icon: Shield, title: "Set Up Sentiment Alerts", description: "Configure real-time monitoring for sentiment shifts across social platforms and review aggregators. If sentiment drops below 70% positive, trigger messaging pivot to emphasise action and spectacle." },
       ],
     };
   }
   if (tag === "platform") {
     return {
-      impact: "This platform update presents both an opportunity and a risk for JP Morgan's digital campaigns. Early adoption of new features typically yields a 15-25% efficiency advantage before competition saturates the format. However, existing campaign structures may need adjustment to fully leverage the changes.",
+      impact: "This platform update presents an opportunity for Deep Water's digital campaigns. Early adoption of new ad formats typically yields a 15-25% efficiency advantage before competition saturates. Movie campaigns benefit disproportionately from ticket-integration and shoppable formats.",
       actions: [
-        { icon: Target, title: "Test New Ad Formats", description: "Allocate 10% of platform budget to test the new features with Sapphire Reserve and Private Banking creative. Run A/B tests against current top performers for 2 weeks." },
-        { icon: TrendingUp, title: "Update Bidding Strategy", description: "Review and adjust bidding strategies to align with the platform's updated algorithm. Consider switching to value-based bidding where available." },
-        { icon: Shield, title: "Monitor Performance Metrics", description: "Set up daily monitoring dashboards to track any performance shifts. Flag campaigns with >10% CPA increase for immediate review." },
-      ],
-    };
-  }
-  if (tag === "macro") {
-    return {
-      impact: "This macroeconomic development has direct implications for JP Morgan's media investment strategy. Market conditions are shifting in ways that could affect investor confidence, media costs, and regional performance dynamics. Proactive budget reallocation can turn this into a competitive advantage.",
-      actions: [
-        { icon: TrendingUp, title: "Reallocate Regional Budget", description: "Shift 8-12% of budget from underperforming regions toward markets showing positive momentum. Focus on markets with favorable economic dynamics and investor confidence." },
-        { icon: Target, title: "Adjust Messaging Strategy", description: "Update ad copy and creative to resonate with current market sentiment. Emphasize stability, heritage, and trusted advisory positioning." },
-        { icon: Shield, title: "Diversify Channel Mix", description: "Reduce dependency on any single channel by spreading investment. Increase upper-funnel awareness spend to maintain brand salience during market shifts." },
+        { icon: Target, title: "Test New Ad Formats", description: "Allocate 10% of platform budget to pilot the new feature with Deep Water trailer and ticket-drive creative. Run A/B tests against current top performers for 7 days." },
+        { icon: TrendingUp, title: "Optimise for Ticket Conversions", description: "If the format supports direct purchase or link-out, connect it to Fandango/AMC ticket pages. Track cost-per-ticket-sale as the primary KPI." },
+        { icon: Shield, title: "Monitor Performance Impact", description: "Set up daily monitoring to track any performance shifts from the platform change. Flag campaigns with >10% CPA increase for immediate creative or targeting adjustments." },
       ],
     };
   }
   if (tag === "audience") {
     return {
-      impact: "This shift in audience behaviour has direct implications for JP Morgan's targeting and messaging strategy. Changing demographics and preferences among key wealth segments require proactive adjustments to campaign creative, channel mix, and audience definitions to maintain engagement and conversion rates.",
+      impact: "Shifting audience behaviour — from how Gen Z discovers movies to the rise of group ticket purchases — has direct implications for Deep Water's targeting, creative, and channel strategy. Adapting to these signals ensures campaign efficiency and maximises opening weekend attendance.",
       actions: [
-        { icon: Target, title: "Update Audience Segments", description: "Refresh lookalike and interest-based audiences to reflect shifting demographics. Prioritize mobile-first, digitally-native affluent segments in prospecting campaigns." },
-        { icon: TrendingUp, title: "Test New Creative Angles", description: "Develop creative variants that speak to evolving audience preferences — test heritage vs. innovation messaging across age cohorts." },
-        { icon: Shield, title: "Expand Channel Testing", description: "Allocate 10-15% of budget to test emerging channels and formats favored by the shifting audience profile, particularly short-form video and social commerce." },
+        { icon: Target, title: "Update Audience Segments", description: "Refresh lookalike and interest-based audiences to reflect evolving movie-discovery behaviour. Prioritise social-first, mobile-native audience segments in prospecting campaigns." },
+        { icon: TrendingUp, title: "Test Social-First Creative", description: "Develop vertical video, meme-style, and UGC-inspired creative variants that match how the target audience discovers and shares movie content." },
+        { icon: Shield, title: "Expand Channel Testing", description: "Allocate 10-15% of budget to test emerging channels and formats favoured by the target audience — TikTok Spark Ads, Instagram Broadcast Channels, and Reddit promoted posts." },
       ],
     };
   }
-  if (tag === "regulation") {
+  if (tag === "macro") {
     return {
-      impact: "This regulatory development requires immediate attention from JP Morgan's marketing and compliance teams. Non-compliance could result in enforcement action, campaign takedowns, or reputational damage. However, early compliance can become a competitive advantage as competitors scramble to adapt.",
+      impact: "Box office trends and industry dynamics directly impact Deep Water's release strategy. Strong overall theatrical demand creates a rising tide, while compressed windows or premium-format competition require tactical spend adjustments to protect screen share and opening weekend performance.",
       actions: [
-        { icon: Shield, title: "Audit Active Campaigns", description: "Conduct an immediate compliance audit of all active ad creatives in affected markets. Flag any campaigns that may need updated disclaimers or disclosures." },
-        { icon: Target, title: "Update Creative Templates", description: "Work with legal to create pre-approved creative templates that meet new regulatory requirements. Build a compliance-ready asset library for rapid deployment." },
-        { icon: TrendingUp, title: "Leverage Compliance as Positioning", description: "Position JP Morgan's regulatory compliance as a trust signal in campaigns. Emphasize security, transparency, and regulatory standing in messaging." },
+        { icon: TrendingUp, title: "Adjust DMA Budget Allocation", description: "Reallocate 10-15% of budget based on market-level box office performance data. Shift investment toward DMAs showing strongest theatrical demand and away from underperforming markets." },
+        { icon: Target, title: "Emphasise Premium Formats", description: "If IMAX/Dolby demand is rising, increase creative featuring premium format messaging. Partner with exhibitors for co-branded campaigns driving premium ticket sales." },
+        { icon: Shield, title: "Scenario Plan for Window Changes", description: "Build 3 spend scenarios based on different theatrical window outcomes. Pre-approve contingency budgets to extend campaigns if the film holds well or pivot to VOD if the window compresses." },
       ],
     };
   }
-  if (tag === "tech-disruption") {
-    return {
-      impact: "This technological shift presents both a threat and an opportunity for JP Morgan's marketing operations. Early adoption of new technologies in campaign strategy typically yields a first-mover advantage, while failure to adapt could result in lost market share to more agile competitors and fintech challengers.",
-      actions: [
-        { icon: TrendingUp, title: "Pilot New Technology Integration", description: "Launch a pilot program integrating this technology into the campaign funnel. Measure impact on conversion rates, CPA, and customer lifetime value over 60 days." },
-        { icon: Target, title: "Differentiate Through Innovation", description: "Update campaign messaging to highlight JP Morgan's technology leadership. Position the firm's digital capabilities as a key differentiator against both traditional banks and fintechs." },
-        { icon: Shield, title: "Monitor Competitive Adoption", description: "Track competitor adoption of this technology through creative intelligence tools. Set alerts for competitor messaging changes that reference similar capabilities." },
-      ],
-    };
-  }
-  if (tag === "macroeconomic") {
-    return {
-      impact: "This macroeconomic signal has direct implications for JP Morgan's media investment strategy and campaign messaging. Economic conditions influence client behavior, product demand, and the competitive landscape. Proactive budget and messaging adjustments can turn macro shifts into a strategic advantage.",
-      actions: [
-        { icon: TrendingUp, title: "Adjust Regional Budget Allocation", description: "Reallocate 10-15% of budget based on updated macroeconomic outlook. Shift investment toward markets with favorable conditions and growing wealth creation." },
-        { icon: Target, title: "Update Product Messaging", description: "Adapt campaign messaging to reflect current economic conditions. Emphasize relevant JP Morgan products — safe haven positioning in uncertainty, growth positioning in expansion." },
-        { icon: Shield, title: "Scenario Plan Budget Flexibility", description: "Build 3 budget scenarios (bullish, neutral, bearish) for the next quarter. Pre-approve contingency reallocations to enable rapid response to further macro shifts." },
-      ],
-    };
-  }
-  // category / default
+  // default
   return {
-    impact: "This industry trend validates JP Morgan's positioning in the premium financial services segment. Growing category demand creates a favorable environment for scaling performance campaigns while maintaining efficiency. The key is to capture incremental demand before competitors increase their investment.",
+    impact: "This development has implications for Deep Water's marketing strategy. Staying ahead of industry shifts and cultural moments ensures campaign relevance and maximises the efficiency of the $9.3M media investment across the release window.",
     actions: [
-      { icon: TrendingUp, title: "Scale Top Performers", description: `Increase budget on top 5 campaigns by 15-20% to capture rising demand. Current top ROAS campaigns have headroom before hitting diminishing returns.` },
-      { icon: Target, title: "Expand Audience Targeting", description: "Broaden prospecting audiences to capture new HNW prospects entering the market. Test lookalike audiences based on recent converters." },
-      { icon: Shield, title: "Accelerate Creative Production", description: "Fast-track 3-5 new creative variants to test against rising demand. Focus on product-specific messaging for Sapphire Reserve, Private Banking, and Wealth Management." },
+      { icon: TrendingUp, title: "Scale Top Performers", description: "Increase budget on the top 3 campaigns by 15-20% to capture rising demand. Current best-performing creative has headroom before hitting frequency caps." },
+      { icon: Target, title: "Expand Audience Targeting", description: "Broaden prospecting audiences to capture new moviegoer segments entering the consideration set. Test lookalike audiences based on recent ticket purchasers." },
+      { icon: Shield, title: "Accelerate Creative Production", description: "Fast-track 3-5 new creative variants to maintain freshness across the release window. Focus on behind-the-scenes, cast-led, and review-score creative angles." },
     ],
   };
 }
@@ -590,7 +434,7 @@ export default function NewsPage() {
                   <div className="flex items-start gap-2.5 px-4 py-3 rounded-xl bg-red-500/5 border border-red-500/10">
                     <AlertTriangle className="h-4 w-4 text-red-400 shrink-0 mt-0.5" />
                     <p className="text-xs text-red-300/80">
-                      <span className="font-semibold text-red-400">Competitor Alert:</span> This article involves <span className="font-semibold">{selectedArticle.competitor}</span>, a direct competitor in the premium financial services segment.
+                      <span className="font-semibold text-red-400">Competitor Alert:</span> This article involves <span className="font-semibold">{selectedArticle.competitor}</span>, a competing theatrical release in Deep Water&apos;s marketing window.
                     </p>
                   </div>
                 )}
@@ -607,7 +451,7 @@ export default function NewsPage() {
                   </div>
                   <div>
                     <h3 className="text-sm font-bold">STRATIS Insight</h3>
-                    <p className="text-[10px] text-muted-foreground/60">What this means for JP Morgan</p>
+                    <p className="text-[10px] text-muted-foreground/60">What this means for Deep Water</p>
                   </div>
                 </div>
 

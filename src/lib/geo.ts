@@ -1,113 +1,63 @@
-import type { RegionId } from '@/types';
-
-/** Lat/lng center for each STRATIS region (used for marker placement) */
-export const REGION_CENTERS: Record<RegionId, [number, number]> = {
-  'north-america': [-95, 40],
-  'europe':        [15, 50],
-  'uk':            [-2, 54],
-  'middle-east':   [45, 25],
-  'apac':          [105, 20],
-  'latam':         [-60, -15],
+/** FIPS state code → state name (50 states + DC) */
+export const STATE_NAMES: Record<string, string> = {
+  '01': 'Alabama',
+  '02': 'Alaska',
+  '04': 'Arizona',
+  '05': 'Arkansas',
+  '06': 'California',
+  '08': 'Colorado',
+  '09': 'Connecticut',
+  '10': 'Delaware',
+  '11': 'District of Columbia',
+  '12': 'Florida',
+  '13': 'Georgia',
+  '15': 'Hawaii',
+  '16': 'Idaho',
+  '17': 'Illinois',
+  '18': 'Indiana',
+  '19': 'Iowa',
+  '20': 'Kansas',
+  '21': 'Kentucky',
+  '22': 'Louisiana',
+  '23': 'Maine',
+  '24': 'Maryland',
+  '25': 'Massachusetts',
+  '26': 'Michigan',
+  '27': 'Minnesota',
+  '28': 'Mississippi',
+  '29': 'Missouri',
+  '30': 'Montana',
+  '31': 'Nebraska',
+  '32': 'Nevada',
+  '33': 'New Hampshire',
+  '34': 'New Jersey',
+  '35': 'New Mexico',
+  '36': 'New York',
+  '37': 'North Carolina',
+  '38': 'North Dakota',
+  '39': 'Ohio',
+  '40': 'Oklahoma',
+  '41': 'Oregon',
+  '42': 'Pennsylvania',
+  '44': 'Rhode Island',
+  '45': 'South Carolina',
+  '46': 'South Dakota',
+  '47': 'Tennessee',
+  '48': 'Texas',
+  '49': 'Utah',
+  '50': 'Vermont',
+  '51': 'Virginia',
+  '53': 'Washington',
+  '54': 'West Virginia',
+  '55': 'Wisconsin',
+  '56': 'Wyoming',
 };
 
-/** Projection configs for zooming to each region */
-export const REGION_PROJECTIONS: Record<RegionId | 'global', { center: [number, number]; scale: number }> = {
-  'global':        { center: [10, 30], scale: 130 },
-  'north-america': { center: [-100, 45], scale: 400 },
-  'europe':        { center: [15, 52], scale: 600 },
-  'uk':            { center: [-4, 55], scale: 1800 },
-  'middle-east':   { center: [45, 27], scale: 600 },
-  'apac':          { center: [110, 15], scale: 300 },
-  'latam':         { center: [-60, -15], scale: 350 },
-};
-
-/** ISO 3166-1 numeric code → display name for tooltips */
-export const COUNTRY_NAMES: Record<string, string> = {
-  '840': 'United States', '124': 'Canada', '484': 'Mexico',
-  '276': 'Germany', '250': 'France', '380': 'Italy', '724': 'Spain',
-  '528': 'Netherlands', '056': 'Belgium', '756': 'Switzerland', '040': 'Austria',
-  '616': 'Poland', '752': 'Sweden', '578': 'Norway', '208': 'Denmark',
-  '246': 'Finland', '620': 'Portugal', '300': 'Greece', '642': 'Romania', '203': 'Czech Republic',
-  '826': 'United Kingdom', '372': 'Ireland',
-  '682': 'Saudi Arabia', '784': 'UAE', '634': 'Qatar', '414': 'Kuwait',
-  '512': 'Oman', '048': 'Bahrain', '400': 'Jordan', '422': 'Lebanon',
-  '376': 'Israel', '818': 'Egypt', '792': 'Turkey',
-  '156': 'China', '392': 'Japan', '410': 'South Korea', '356': 'India',
-  '036': 'Australia', '554': 'New Zealand', '360': 'Indonesia', '764': 'Thailand',
-  '704': 'Vietnam', '608': 'Philippines', '458': 'Malaysia', '702': 'Singapore',
-  '076': 'Brazil', '032': 'Argentina', '152': 'Chile', '170': 'Colombia', '604': 'Peru',
-};
+/** Convenience array of all FIPS state codes */
+export const ALL_STATE_FIPS = Object.keys(STATE_NAMES);
 
 /**
- * ISO 3166-1 numeric country code → RegionId.
- * ~40 key markets so the choropleth has meaningful coverage.
- */
-export const COUNTRY_TO_REGION: Record<string, RegionId> = {
-  // North America
-  '840': 'north-america', // USA
-  '124': 'north-america', // Canada
-  '484': 'north-america', // Mexico
-
-  // Europe
-  '276': 'europe', // Germany
-  '250': 'europe', // France
-  '380': 'europe', // Italy
-  '724': 'europe', // Spain
-  '528': 'europe', // Netherlands
-  '056': 'europe', // Belgium
-  '756': 'europe', // Switzerland
-  '040': 'europe', // Austria
-  '616': 'europe', // Poland
-  '752': 'europe', // Sweden
-  '578': 'europe', // Norway
-  '208': 'europe', // Denmark
-  '246': 'europe', // Finland
-  '620': 'europe', // Portugal
-  '300': 'europe', // Greece
-  '642': 'europe', // Romania
-  '203': 'europe', // Czech Republic
-
-  // UK
-  '826': 'uk', // United Kingdom
-  '372': 'uk', // Ireland
-
-  // Middle East
-  '682': 'middle-east', // Saudi Arabia
-  '784': 'middle-east', // UAE
-  '634': 'middle-east', // Qatar
-  '414': 'middle-east', // Kuwait
-  '512': 'middle-east', // Oman
-  '048': 'middle-east', // Bahrain
-  '400': 'middle-east', // Jordan
-  '422': 'middle-east', // Lebanon
-  '376': 'middle-east', // Israel
-  '818': 'middle-east', // Egypt
-  '792': 'middle-east', // Turkey
-
-  // APAC
-  '156': 'apac', // China
-  '392': 'apac', // Japan
-  '410': 'apac', // South Korea
-  '356': 'apac', // India
-  '036': 'apac', // Australia
-  '554': 'apac', // New Zealand
-  '360': 'apac', // Indonesia
-  '764': 'apac', // Thailand
-  '704': 'apac', // Vietnam
-  '608': 'apac', // Philippines
-  '458': 'apac', // Malaysia
-  '702': 'apac', // Singapore
-
-  // LATAM
-  '076': 'latam', // Brazil
-  '032': 'latam', // Argentina
-  '152': 'latam', // Chile
-  '170': 'latam', // Colombia
-  '604': 'latam', // Peru
-};
-
-/**
- * Returns a teal rgba fill for mapped countries.
+ * Returns a teal rgba fill for mapped states.
  * @param intensity 0..1 — maps to 8–60% opacity
  */
 export function regionFillColor(intensity: number): string {

@@ -51,7 +51,7 @@ const INITIAL_LAYERS: SceneLayer[] = [
   { id: "key", name: "Key Light", icon: Lightbulb, visible: true, locked: false },
   { id: "area", name: "Area Light", icon: LayoutGrid, visible: true, locked: false },
   { id: "sapphire", name: "Sapphire Card", icon: Box, visible: true, locked: true },
-  { id: "shield", name: "JP Morgan Shield", icon: Box, visible: true, locked: true },
+  { id: "shield", name: "Deep Water Shield", icon: Box, visible: true, locked: true },
   { id: "paint", name: "Paint Splashes", icon: Layers, visible: true, locked: false },
   { id: "headline", name: "Headline Text", icon: Type, visible: true, locked: false },
   { id: "bg", name: "Background", icon: Image, visible: true, locked: false },
@@ -540,7 +540,7 @@ export default function CreativeStudioPage() {
                 </div>
                 <div className="relative rounded-lg overflow-hidden shadow-2xl shadow-black/40">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/creative-hero.jpg" alt="Your Future Our Commitment — JP Morgan campaign creative" className="w-[580px] h-auto block select-none" draggable={false} />
+                  <img src="/creative-hero.jpg" alt="Your Future Our Commitment — Deep Water campaign creative" className="w-[580px] h-auto block select-none" draggable={false} />
                   <div className="absolute inset-0 border-2 border-teal/60 rounded-lg pointer-events-none">
                     <div className="absolute -top-1.5 -left-1.5 w-3 h-3 bg-teal rounded-sm border border-card" />
                     <div className="absolute -top-1.5 -right-1.5 w-3 h-3 bg-teal rounded-sm border border-card" />
@@ -819,7 +819,7 @@ export default function CreativeStudioPage() {
                     <div className="grid grid-cols-2 gap-2">
                       {[
                         { id: "sapphire", label: "Sapphire Reserve" },
-                        { id: "shield", label: "JP Morgan Shield" },
+                        { id: "shield", label: "Deep Water Shield" },
                         { id: "private", label: "Private Banking" },
                         { id: "wealth", label: "Wealth Mgmt" },
                       ].map((model) => (

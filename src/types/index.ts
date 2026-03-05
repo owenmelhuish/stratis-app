@@ -1,13 +1,8 @@
 // ===== Core Hierarchy =====
-export type RegionId = 'north-america' | 'europe' | 'uk' | 'middle-east' | 'apac' | 'latam';
+export type RegionId = 'north-america';
 
 export const REGION_LABELS: Record<RegionId, string> = {
   'north-america': 'North America',
-  'europe': 'Europe',
-  'uk': 'United Kingdom',
-  'middle-east': 'Middle East',
-  'apac': 'Asia Pacific',
-  'latam': 'Latin America',
 };
 
 export type ChannelId = 'instagram' | 'facebook' | 'tiktok' | 'google-search' | 'ttd';
@@ -38,7 +33,7 @@ export interface Campaign {
   objective: CampaignObjective;
   status: CampaignStatus;
   channels: ChannelId[];
-  countries: string[]; // ISO 3166-1 numeric codes
+  countries: string[]; // US FIPS state codes
   startDate: string;
   plannedBudget: number;
 }
@@ -158,7 +153,7 @@ export type UserRole = 'agency' | 'exec';
 export type ViewLevel = 'brand' | 'region' | 'campaign';
 
 // ===== News =====
-export type NewsTag = 'brand' | 'competitor' | 'category' | 'platform' | 'macro' | 'audience' | 'regulation' | 'tech-disruption' | 'macroeconomic';
+export type NewsTag = 'brand' | 'cast' | 'competitor' | 'genre' | 'sentiment' | 'platform' | 'audience' | 'macro';
 export type NewsUrgency = 'low' | 'medium' | 'high';
 
 export interface NewsItem {

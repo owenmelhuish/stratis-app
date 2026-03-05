@@ -64,15 +64,7 @@ export function CampaignView() {
         </div>
       )}
 
-      {campaign && (
-        <WorldMapChart
-          regionData={data.regionData}
-          viewLevel="campaign"
-          selectedRegion={campaign.region}
-          highlightedCountries={campaign.countries}
-          campaignName={campaign.name}
-        />
-      )}
+      <WorldMapChart stateData={data.stateData} />
 
       <div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">

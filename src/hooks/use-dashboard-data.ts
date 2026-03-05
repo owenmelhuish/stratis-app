@@ -3,16 +3,21 @@ import { useMemo } from 'react';
 import { useAppStore } from '@/lib/store';
 import { generateAllData, aggregateMetrics, type MockDataStore } from '@/lib/mock-data';
 import type { RegionId, ChannelId, AggregatedKPIs, Campaign, DailyMetrics, Anomaly, Insight, ViewLevel } from '@/types';
-import { COUNTRY_NAMES, COUNTRY_TO_REGION } from '@/lib/geo';
+import { STATE_NAMES } from '@/lib/geo';
 import { REGION_LABELS } from '@/types';
 import { subDays, format, differenceInDays, parseISO } from 'date-fns';
 
-export interface CountryDatum {
-  countryCode: string;
-  countryName: string;
-  regionId: RegionId;
+export interface StateDatum {
+  stateCode: string;
+  stateName: string;
   campaignCount: number;
   spend: number;
+  impressions: number;
+  conversions: number;
+  revenue: number;
+  roas: number;
+  cpa: number;
+  cpm: number;
 }
 
 export interface DashboardData {
@@ -33,7 +38,7 @@ export interface DashboardData {
     previousKpis?: AggregatedKPIs;
   }>;
   channelData: Record<string, AggregatedKPIs>;
-  countryData: CountryDatum[];
+  stateData: StateDatum[];
   topImproving: Array<{ label: string; region: RegionId; roasDelta: number; cpaDelta: number }>;
   topDeclining: Array<{ label: string; region: RegionId; roasDelta: number; cpaDelta: number }>;
   anomalies: Anomaly[];
@@ -162,12 +167,14 @@ export function useDashboardData(): DashboardData {
         cpm: (d.spend / imp) * 1000,
         cpa: d.conversions > 0 ? d.spend / d.conversions : 0,
         engagementRate: (d.engagements / imp) * 100,
+        videoViews3s: d.videoViews3s,
+        frequency: d.reach > 0 ? d.impressions / d.reach : 0,
         creativeFatigueIndex: 30 + Math.random() * 40,
       };
     });
 
     // Region data
-    const allRegions: RegionId[] = ['north-america', 'europe', 'uk', 'middle-east', 'apac', 'latam'];
+    const allRegions: RegionId[] = ['north-america'];
     const regionData = allRegions.map(region => {
       const regionCamps = campaigns.filter(c => c.region === region);
       const rDays = collectDays(regionCamps, start, end, channelFilter);
@@ -243,33 +250,41 @@ export function useDashboardData(): DashboardData {
 
     const selectedCampaignObj = selectedCampaign ? store.campaigns.find(c => c.id === selectedCampaign) : undefined;
 
-    // Country-level data: split each campaign's spend evenly across its countries
-    const countryAccum: Record<string, { spend: number; campaignCount: number }> = {};
+    // State-level data: split each campaign's metrics evenly across its states
+    const stateAccum: Record<string, { spend: number; impressions: number; conversions: number; revenue: number; campaignCount: number }> = {};
     for (const cd of campaignData) {
-      const countries = cd.campaign.countries;
-      if (!countries || countries.length === 0) continue;
-      const perCountrySpend = cd.kpis.spend / countries.length;
-      for (const code of countries) {
-        if (!countryAccum[code]) countryAccum[code] = { spend: 0, campaignCount: 0 };
-        countryAccum[code].spend += perCountrySpend;
-        countryAccum[code].campaignCount += 1;
+      const states = cd.campaign.countries;
+      if (!states || states.length === 0) continue;
+      const n = states.length;
+      for (const code of states) {
+        if (!stateAccum[code]) stateAccum[code] = { spend: 0, impressions: 0, conversions: 0, revenue: 0, campaignCount: 0 };
+        stateAccum[code].spend += cd.kpis.spend / n;
+        stateAccum[code].impressions += cd.kpis.impressions / n;
+        stateAccum[code].conversions += cd.kpis.conversions / n;
+        stateAccum[code].revenue += cd.kpis.revenue / n;
+        stateAccum[code].campaignCount += 1;
       }
     }
-    let countryData: CountryDatum[] = Object.entries(countryAccum).map(([code, val]) => ({
-      countryCode: code,
-      countryName: COUNTRY_NAMES[code] || code,
-      regionId: COUNTRY_TO_REGION[code] as RegionId,
+    let stateData: StateDatum[] = Object.entries(stateAccum).map(([code, val]) => ({
+      stateCode: code,
+      stateName: STATE_NAMES[code] || code,
       campaignCount: val.campaignCount,
       spend: val.spend,
+      impressions: Math.round(val.impressions),
+      conversions: Math.round(val.conversions),
+      revenue: val.revenue,
+      roas: val.spend > 0 ? val.revenue / val.spend : 0,
+      cpa: val.conversions > 0 ? val.spend / val.conversions : 0,
+      cpm: val.impressions > 0 ? (val.spend / val.impressions) * 1000 : 0,
     }));
     if (selectedCountries.length > 0) {
       const countrySet = new Set(selectedCountries);
-      countryData = countryData.filter(c => countrySet.has(c.countryCode));
+      stateData = stateData.filter(c => countrySet.has(c.stateCode));
     }
 
     return {
       viewLevel, currentKPIs, previousKPIs, timeSeries, regionData, campaignData,
-      channelData: channelDataMap, countryData, topImproving, topDeclining, anomalies, scopedInsights,
+      channelData: channelDataMap, stateData, topImproving, topDeclining, anomalies, scopedInsights,
       filteredRegions: selectedRegions,
       filteredCountries: selectedCountries,
       allCampaigns: store.campaigns, selectedCampaignObj, store,

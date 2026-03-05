@@ -12,7 +12,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
 import { ChevronRight, ChevronDown, SlidersHorizontal, GitCompareArrows, User, MapPin, Radio, Megaphone } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { COUNTRY_NAMES, COUNTRY_TO_REGION } from '@/lib/geo';
+import { STATE_NAMES } from '@/lib/geo';
 import { generateAllData } from '@/lib/mock-data';
 
 const DATE_PILLS: { value: DateRangePreset; label: string }[] = [
@@ -64,16 +64,16 @@ function MultiSelectFilter({
   );
 }
 
-/** Region → Country[] map derived from COUNTRY_TO_REGION */
+/** Region → State[] map — all US states belong to north-america */
 const REGION_COUNTRIES: Record<RegionId, { code: string; name: string }[]> = (() => {
   const map: Record<string, { code: string; name: string }[]> = {};
   for (const regionId of Object.keys(REGION_LABELS)) {
     map[regionId] = [];
   }
-  for (const [code, region] of Object.entries(COUNTRY_TO_REGION)) {
-    map[region]?.push({ code, name: COUNTRY_NAMES[code] ?? code });
+  for (const [code, name] of Object.entries(STATE_NAMES)) {
+    map['north-america']?.push({ code, name });
   }
-  // Sort countries alphabetically within each region
+  // Sort states alphabetically
   for (const list of Object.values(map)) {
     list.sort((a, b) => a.name.localeCompare(b.name));
   }
@@ -197,13 +197,13 @@ export function HeaderBar() {
 
   const store = useMemo(() => generateAllData(), []);
 
-  // Countries available based on selected regions
+  // States available based on selected regions
   const availableCountries = useMemo(() => {
     const items: Record<string, string> = {};
-    for (const [code, name] of Object.entries(COUNTRY_NAMES)) {
+    for (const [code, name] of Object.entries(STATE_NAMES)) {
       if (selectedRegions.length > 0) {
-        const region = COUNTRY_TO_REGION[code];
-        if (!region || !selectedRegions.includes(region as RegionId)) continue;
+        // All states belong to north-america
+        if (!selectedRegions.includes('north-america')) continue;
       }
       items[code] = name;
     }
@@ -315,7 +315,7 @@ export function HeaderBar() {
       <div className="flex items-center justify-between px-8 h-12">
         <div className="flex items-center gap-1.5 min-w-0">
           <button onClick={() => { setSelectedRegion(null); setSelectedCampaign(null); }} className="text-sm font-semibold text-foreground hover:text-teal transition-colors">
-            JP Morgan
+            Deep Water
           </button>
           {selectedRegion && (
             <>
