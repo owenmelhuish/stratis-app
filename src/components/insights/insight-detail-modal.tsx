@@ -10,7 +10,6 @@ import {
 import { Dialog as DialogPrimitive } from 'radix-ui';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import {
   ChevronLeft,
@@ -219,7 +218,7 @@ export function InsightDetailModal({
       <DialogPortal>
         <DialogOverlay className="bg-black/60 backdrop-blur-sm" />
         <DialogPrimitive.Content
-          className="fixed top-[50%] left-[50%] z-50 w-full max-w-lg translate-x-[-50%] translate-y-[-50%] rounded-2xl border border-border/40 bg-card shadow-2xl outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95"
+          className="fixed top-[50%] left-[50%] z-50 w-full max-w-lg max-h-[85vh] translate-x-[-50%] translate-y-[-50%] rounded-2xl border border-border/40 bg-card shadow-2xl outline-none overflow-hidden data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95"
         >
           <DialogTitle className="sr-only">{insight.title}</DialogTitle>
 
@@ -241,7 +240,7 @@ export function InsightDetailModal({
             </button>
           )}
 
-          <ScrollArea className="max-h-[85vh]">
+          <div className="overflow-y-auto max-h-[85vh]">
             <div className="p-5 space-y-0">
 
               {/* ─── Metric Tabs ─── */}
@@ -434,6 +433,8 @@ export function InsightDetailModal({
                 <CreativeActionSection
                   insight={insight}
                   assetName={assetName}
+                  budgetIntensity={budgetIntensity}
+                  onBudgetChange={setBudgetIntensity}
                   onSkip={() => onDiscard(insight.id)}
                   onPause={() => onComplete(insight.id)}
                 />
@@ -453,12 +454,14 @@ export function InsightDetailModal({
               ) : (
                 <DefaultActionSection
                   insight={insight}
+                  budgetIntensity={budgetIntensity}
+                  onBudgetChange={setBudgetIntensity}
                   onDiscard={() => onDiscard(insight.id)}
                   onComplete={() => onComplete(insight.id)}
                 />
               )}
             </div>
-          </ScrollArea>
+          </div>
         </DialogPrimitive.Content>
       </DialogPortal>
     </Dialog>
@@ -470,11 +473,15 @@ export function InsightDetailModal({
 function CreativeActionSection({
   insight,
   assetName,
+  budgetIntensity,
+  onBudgetChange,
   onSkip,
   onPause,
 }: {
   insight: Insight;
   assetName: string;
+  budgetIntensity: number;
+  onBudgetChange: (v: number) => void;
   onSkip: () => void;
   onPause: () => void;
 }) {
@@ -497,6 +504,35 @@ function CreativeActionSection({
           {assetName}
         </span>
         <ChevronDown className="h-4 w-4 text-muted-foreground/50" />
+      </div>
+
+      {/* Spend reduction slider */}
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-sm font-semibold">Spend Reduction</p>
+          <span className="text-xs text-muted-foreground font-medium">{budgetIntensity}%</span>
+        </div>
+        <div className="px-1">
+          <Slider
+            value={[budgetIntensity]}
+            min={0}
+            max={100}
+            step={1}
+            onValueChange={([v]) => onBudgetChange(v)}
+          />
+        </div>
+        <div className="flex justify-between text-[10px] text-muted-foreground mt-1.5 px-1">
+          <span>No change</span>
+          <span>Full pause</span>
+        </div>
+      </div>
+
+      {/* Info disclaimer */}
+      <div className="flex items-start gap-2.5 bg-muted/20 rounded-lg p-3">
+        <Info className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
+        <p className="text-[11px] text-muted-foreground leading-relaxed">
+          Adjust how aggressively to reduce spend on this asset. The chart above reflects the projected improvement.
+        </p>
       </div>
 
       {/* Bottom action buttons */}
@@ -657,27 +693,92 @@ function ChannelOptActionSection({
 
 function DefaultActionSection({
   insight,
+  budgetIntensity,
+  onBudgetChange,
   onDiscard,
   onComplete,
 }: {
   insight: Insight;
+  budgetIntensity: number;
+  onBudgetChange: (v: number) => void;
   onDiscard: () => void;
   onComplete: () => void;
 }) {
+  const [completedSteps, setCompletedSteps] = useState<Set<string>>(new Set());
+
+  const toggleStep = (stepId: string) => {
+    setCompletedSteps((prev) => {
+      const next = new Set(prev);
+      if (next.has(stepId)) {
+        next.delete(stepId);
+      } else {
+        next.add(stepId);
+      }
+      return next;
+    });
+  };
+
   return (
     <div className="space-y-4">
       {/* Action steps */}
-      {insight.actionSteps.map((step) => (
-        <div key={step.id} className="flex items-start gap-3">
-          <Circle className="h-5 w-5 text-muted-foreground/40 mt-0.5 shrink-0" />
-          <div>
-            <p className="text-sm font-semibold">{step.title}</p>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
-              {step.subtitle}
-            </p>
-          </div>
+      {insight.actionSteps.map((step) => {
+        const done = completedSteps.has(step.id);
+        return (
+          <button
+            key={step.id}
+            onClick={() => toggleStep(step.id)}
+            className={cn(
+              'flex items-start gap-3 w-full text-left rounded-lg px-3 py-2.5 border transition-colors',
+              done
+                ? 'border-emerald-500/30 bg-emerald-500/5'
+                : 'border-border/20 bg-muted/10 hover:bg-muted/20'
+            )}
+          >
+            {done ? (
+              <Check className="h-5 w-5 text-emerald-400 mt-0.5 shrink-0" />
+            ) : (
+              <Circle className="h-5 w-5 text-muted-foreground/40 mt-0.5 shrink-0" />
+            )}
+            <div>
+              <p className={cn('text-sm font-semibold', done && 'text-emerald-300/80')}>
+                {step.title}
+              </p>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                {step.subtitle}
+              </p>
+            </div>
+          </button>
+        );
+      })}
+
+      {/* Execution intensity slider */}
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-sm font-semibold">Execution Intensity</p>
+          <span className="text-xs text-muted-foreground font-medium">{budgetIntensity}%</span>
         </div>
-      ))}
+        <div className="px-1">
+          <Slider
+            value={[budgetIntensity]}
+            min={0}
+            max={100}
+            step={1}
+            onValueChange={([v]) => onBudgetChange(v)}
+          />
+        </div>
+        <div className="flex justify-between text-[10px] text-muted-foreground mt-1.5 px-1">
+          <span>Conservative</span>
+          <span>Aggressive</span>
+        </div>
+      </div>
+
+      {/* Info disclaimer */}
+      <div className="flex items-start gap-2.5 bg-muted/20 rounded-lg p-3">
+        <Info className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
+        <p className="text-[11px] text-muted-foreground leading-relaxed">
+          Adjust how aggressively to apply this recommendation. The chart above reflects the projected improvement at the selected intensity.
+        </p>
+      </div>
 
       {/* Bottom action buttons */}
       <div className="flex items-center gap-3 pt-2">
